@@ -1,0 +1,59 @@
+<p>this is a paragraph</p>：段落
+<a href="default.html">this is a link</a>：链接
+<a href="default.html" target="_blank">this is a link in a new page</a>：在新的页面打开链接 
+<br>：换行
+<body>页面要显示的内容</body>：主体
+<html></html>：定义了整个html文档
+
+
+
+首行是<!DOCTYPE html>，用以声明正确显示网页。
+
+由于输入中文有可能会出现乱码，所以需要在头部的元数据中声明为utf-8或者GBK编码
+<head>
+<meta charset="UTF-8">
+</head>
+
+html的元素可以设置属性，属性一般在开始标签中，以名称=值的形式出现
+<a href="127.0.0.1">this is a link</a>
+属性值一般以双引号括起来，但是如果属性值本身就有双引号，那么就必须使用单引号：name='John "ShotGun" Nelson'
+属性值		描述
+class		为html元素定义的一个或多个累名
+id		定义元素的唯一id
+style		规定元素的行内样式(inline style)
+title		描述元素的额外信息
+
+HTML标题
+标题通过<h1>--<h6>定义，其中<h1>是最大的标题，<h6>是最小的标题
+<h1></h1>
+<h2></h2>
+
+HTML水平线
+<hr>和<hr />都可以定义水平线
+
+HTML注释
+<!--this is a comment-->
+
+加粗文本
+<b>加粗文本</b>
+
+斜体文本
+<i>斜体文本</i>
+
+下标与上标
+<sub>下标</sub>
+<sup>上标</sup>
+
+id属性
+<a id="tips">提示</a>
+<a href="http://www.runoob.com/html/html-links.html#tips">提示2</a>
+
+head头部元素
+<head>包含所有的头部标签元素，可以在头部中插入脚本(scripts)，样式文件(css)，以及各种元(meta)信息：
+<titile>,<style>,<link>,<meta>,<script>,<noscript>,<base>
+
+<titile></title>：文档的标题，是必须的
+<base href="http://www.runoob.com/images/" target="_blank">:基本的链接地址和链接目标，如果在文件中某个资源使用的是相对路径，那么绝对路径就会加上这个base下的路径
+<link>常用于链接样式表
+<style>定义了html文档的样式文件引用地址，也可以直接添加样式文件渲染html文档
+<mete>元数据，用于被浏览器解析

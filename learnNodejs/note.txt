@@ -1,0 +1,7 @@
+使用命令:
+npm install express //在当前目录下面安装express模块
+npm install express -g //安装全局模块exress，安装的路径是/usr/local/lib/nodejs/node-v8.9.0-linux-x64/lib/node_modules
+卸载模块命令：
+npm uninstall express
+搜索模块：
+npm search express 

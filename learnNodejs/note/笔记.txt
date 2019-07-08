@@ -1,0 +1,20 @@
+nodejs是服务器程序，运行在服务器端，所以没有根目录
+nodejs需要为每一个资源文件设计url路由，所以URL和真实物理文件无关。
+
+nodejs中将很多的功能划分为一个个module（模块）。
+通过require调用这些模块，和c/c++中的#include一样。
+
+http模块
+res.write()和res.end()是向响应中写入内容的方法，最后一定要使用res.end()写。
+
+url模块
+
+
+queryString模块
+
+@param的作用就是如下：
+原始情况：
+public List<Role> findRoleByMap(Map<String, Object> parameter);
+使用@param后的情况：
+public List<Role> findRoleByAnnotation(@Param("roleName") String roleName, @Param("note") String note);
+这样的话代码的可读性更好
