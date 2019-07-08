@@ -1,0 +1,10 @@
+git config --global user.name 'gu-yy'
+git config --global user,email 'gyy_110@126.com'
+
+git init
+git add *
+git commit -m '2'
+
+git push -u origin master
+如果不行强制提交
+git push -u origin +masteru  
