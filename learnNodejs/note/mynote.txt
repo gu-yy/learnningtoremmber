@@ -1,0 +1,227 @@
+单线程
+非阻塞I/O
+事件驱动
+
+单线程：
+	node.js不会为每一个客户链接创建一个新线程，仅仅使用一个线程，通过事件驱动，非阻塞I/O，事件驱动，让nodejs程序在宏观上并行。
+	通过非阻塞I/O，单线程宏观上就并行了。
+	操作系统就不会再有线程创建，销毁的时间开销。
+	缺点就是一个崩，所有崩。
+非阻塞I/O：
+	在执行访问数据库代码后，会立即执行其他代码，而把数据库返回的结果的处理代码放到回调函数中。
+	通过事件循环，不断检测是否有未处理的事件，然后依次处理。
+事件驱动：
+	客户端建立连接和提交数据等行为都会触发事件。然后事件一直循环依次进行。
+
+nodejs善于I/O，而不善于计算：
+	用户表单
+	考试系统
+	聊天室
+	图文直播
+	长连接
+nodejs是跨平台的。
+
+模块
+fs:
+	负责读写文件。
+	异步读取文件
+		fs.readFile('sample.txt',function(err,data){//还有一种方式是指定读取文件的文件编码fs.readFile('sample.txt','utf-8',function(err,data))
+			//当err不为null时，读取失败
+			//当err为null时，读取成功，读取的数据在data中
+		})
+	当不指定读取编码时，返回的data是一个Buffer对象，Buffer对象是一个包含任意个字节的数组
+	Buffer转String
+		var text=data.toString('utf-8');
+	String转Buffer
+		var buf=Buffer.from(text,'utf-8');
+	同步读取文件
+		var data=fs.readFileSync('sample.txt','utf-8');
+	如果同步读取文件发生错误，需要使用try...catch捕获错误
+		try{
+			var data=fs.readFileSync('sample.txt','utf-8');
+			console.log(data;)
+		}catch(err){
+			//error
+		}
+	异步写文件
+		var data='hello world';
+		fs.writeFile('output.txt',data,function(err){
+			//err不为空，那么返回错误
+			//err为空，写入文件正确
+		})
+	同步写文件
+		fs.writeFileSync('output.txt',data);//使用try...catch捕获发生的错误
+	fs.stat();//获取文件的大小以及创建的时间等信息，也就是返回文件的详细信息
+		fs.stat('sample.txt',function(err,stat){
+			if(err){
+				//error
+			}
+			else{
+				//stat中包含了文件的信息
+				//stat.isFile()，是否是文件
+				//stat.isDirectory()，是否为目录
+				//stat.size，大小
+				//stat.birthtime，创建时间
+				//stat.mtime，修改时间
+			}
+		})
+		//同步获取信息
+		fs.statSync('sample.txt')
+
+stream:
+	stream是node.js提供的仅在服务端用的模块，目的是为了支持流
+	从键盘输入到应用程序叫做标准输入流stdin
+	从应用程序输出到显示器叫做标准输出流stdout
+	流的特点是数据是有序的，必须一次读取，或者一次写入，不能随机存取
+	data事件表示流的数据可以读取了，end事件表示流已经到末尾了，读取完毕，error事件表示出错
+		var rs=fs.createReadStream('sample.txt','utf-8');//打开一个流
+		rs.on('data',function(chunk){
+			//chunk是每次传递的流的一部分数据，因为data事件可能有多次，每次从流中读取的数据就存在chunk中
+		})
+		rs.on('end',function(){
+			//读取完毕
+		})
+		rs.on('error',function(err){
+			//出错
+		})
+	以流的形式写入文件，只需要不断调用write()方法，最后以end()结束
+		var ws1=fs.createWriteStream('output1.txt','utf-8');
+		ws1.write('写入文本数据')
+		ws1.write('END.')
+		ws1.end();
+
+		var ws2=fs.createWriteStream('output2.txt');
+		ws2.write(new Buffer('写入二进制数据','utf-8'));
+		ws2.write(new Buffer('END.','utf-8'));
+		ws2.end();
+	所有读取数据的流都继承自stram.Readable，所有写入数据的流都继承自stream.Writable
+pipe:
+	将输出流Readable和输入流Writable流串起来后，所有数据自动从Readable流进入Writable流，这种操作叫管道pipe
+	Readable有一个方法pipe()方法，就是将一个输出流和输入流串起来的作用，例如将两个文件流串起来，数据就自动从源文件写入到了目标文件中，这就是复制文件
+		var rs=fs.createReadStream('sample.txt');
+		var ws=fs.createWriteStream('copied.txt');
+		rs.pipe(ws);
+	默认情况下，当Readable流的数据读取完毕后，end事件触发后，将自动关闭Writable流，为了不关闭输入流，需要传入参数：
+		readable.pipe(writable,{end:false});
+
+http:
+	request对象封装了http请求，通过request对象的属性和方法就可以拿到所有的http请求的信息
+	response对象封装了http响应，通过response对象的方法可以将http响应返回给浏览器
+		var server=http.createServer(function(request,response){
+			//回调函数接受request和response对象
+			response.writeHead(200,{'Content-Type':'text/html'});//也可以response.writeHead(200,{'Content-Type':'text/html;charset=UTF-8'});
+			response.write('gyy');
+			response.end('goodbye');
+		});
+		server.listen(4396,'127.0.0.1');
+
+url:
+	url的parse()方法将字符串解析为一个url对象
+	url对象：
+	
+	    Url{
+		protocol:'http',
+		slashes:true,
+		auth:'user:pass',
+		host:'host.com:8080',
+		port:'8080',
+		hostname:'host.com',
+		hash:'#hash',
+		search:'?query=string',
+		query:'query=string',
+		pathname:'/path/to/file',
+		path:'/path/to/file?query=string',
+		href:'http://user:pass@host.com:8080/path/to/file?query=string#hash'
+		}
+
+path:
+	处理本地文件目录需要使用path模块，它可以方便的构造模块
+		var workDir=path.resolve('.');//解析当前目录,/user/michael
+		var filePath=path.join(workDir,'pub','index.html');//组合成完整的路径，当前目录+pub+index.html，，，/user/michael/pub/index.html
+
+crypto:
+	nodejs是用c/c++实现的这些加密和哈希算法，因为js实现这些算法太慢了
+	MD5是一种常见的哈希算法，用于给数据签名，这个签名用十六进制字符串表示
+		const crypto=require('crypto');
+		const hash=crypto.createHash('md5');//这里可以换成sha1,sha256,sha512
+		hash.update('hello world');//它的作用是使用哈希函数处理字符串
+		hash.uodate('hello nodejs');//可以多次调用
+		hash.digest('hex');//这个函数的作用将哈希函数处理后的数据以什么格式输出
+
+	Hmac:这也是一种哈希算法，它可以利用MD5或者SHA1等哈希算法，不同的是，它还具有一个秘钥，当秘钥不同的时候，相同算法处理相同数据得到的结果不同
+		const hmac=crypto.createHmac('sha256','secret-key');
+		hmac.update('hello world');
+		hmac.update('hello nodejs');
+		hmac.digest('hex');
+
+	AES:一种对称加密算法，加密解密使用同一秘钥，使用的时候需要自己封装加密和解密函数
+		const crypto=require('crypto');
+		function aseEncrypt(data,key){
+			const cipher=crypto.createCipher('aes192',key);
+			var crypted=cipher.update(data,'utf-8','hex');
+			crypted++cipher.final('hex');
+			return crypted;
+		}
+		function aesDecrypt(encrypted,key){
+			const decipher=crypto.createDecipher('aes192',key);
+			var decrypted=decipher.update(encrypted,'hex','utf-8');
+			decrypted+=decipher.final('utf-8');
+			return decrypted;
+		}
+		var data='hello world';
+		var key='gyyyyy';
+		var encrypted=aesEncrypt(data,key);
+		var decrypted=aesDecrypt(encrypted,key);
+	AES是一个大类，其中包含了许多的算法，例如aes192,aes-128-ecb,aes-256-cbc等，加密结果通常两种表示形式hex和base64
+
+	Diffie-Hellman
+		DH算法是一个秘钥交换协议，可以在双方不泄露秘钥的情况下协商出一个秘钥，例如小明和小红协商秘钥：
+			1、小明选择一个素数和一个底数，素数p=23,底数g=5(底数可以任选)，再选择一个秘密整数a=6，计算A=g^a(mod p)=8,然后告诉小红p=23,g=5,A=8
+			2、小红收到p,g,A后，也选择一个秘密整数b=15,然后计算B=g^b(mod p)=19,因此，小红告诉小明B=19
+			3、小明计算出s=B^a(mod p)=2，同时小红计算出s=A^b(mod p)=2，所以，最终协商出的秘钥就是2
+			const crypto=require('crypto');
+			var ming=crypto.createDiffieHellman(512);
+			var ming_keys=ming.generateKeys();
+			
+			var prime=ming.getPrime();
+			var generator=ming.getGenerator();
+			
+			var hong=crypto.createDiffieHellman(prime,generator);
+			var hong_keys=hong.generateKeys();
+			
+			//exchange and generator secret
+			var ming_secret=ming.computeSecret(hong_keys);
+			var hong_secret=hong.computeSecret(ming_keys);
+
+	RSA:这是一种非对称加密，当小明给小红发消息时，可以用小明的私钥加密，然后用小明的公钥解密，也可以用小红的公钥加密，然后小红用自己的私钥解密
+	在使用公钥和私钥进行加密和解密时，需要首先自己准备公钥和私钥
+	通过以下命令可以得到公钥和私钥的pem文件
+		openssl genrsa -aes256 -out rsa-key.pem 2048//输入密码，这个密码用来加密RSA秘钥，加密的方式指定为AES256
+		openssl rsa -in rsa-key.pem -outform PEM -out rsa-prv.pem//输入密码导出原始私钥
+		openssl rsa -in rsa-key.pem -outform PEM -pubout -out rsa-pub.pem//输入密码，导出公钥
+	然后就可以通过crypto模块提供的方法实现RSA非对称加密
+		const
+			fs=require('fs'),
+			crypto=require('crypto');
+		function loadKey(file){
+			//从文件加载key，就是pem文件中的字符串
+			return fs.readFileSync(file,'utf8');
+		}
+		let
+			prvKey=loadKey('./rsa-prv.pem'),
+			pubKey=loadKey('./rsa-pub.pem'),
+			message='hello world';
+		//使用私钥加密
+		let enc_by_prv=crypto.privateEncrypt(prvKey,Buffer.from(message,'utf8'));
+		enc_by_prv.toString('hex');
+		//公钥解密
+		let dec_by_pub=crypto.publicDecrypt(pubKey,enc_by_prv);
+		dec_by_pub.toString('utf8');
+
+		//使用公钥加密
+		let enc_by_pub=crypto.publicEncrypt(pubKey,Buffer.from(message,'utf8'));
+		enc_by_pub.toString('hex');
+		//使用私钥解密
+		let dec_by_prv=cryptoDecrypt(prvKey,enc_by_pub);
+		dec_by_prv.toString('utf8');
+	证书：数字证书通常用在SSL连接，也就是https连接.

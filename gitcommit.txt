@@ -3,6 +3,7 @@ git config --global user,email 'gyy_110@126.com'
 
 git init
 git add *
+git status -s
 git commit -m '2'
 
 git push -u origin master
