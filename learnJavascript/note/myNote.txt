@@ -731,3 +731,26 @@
 			}
 		}
 	class继承和原型继承本质上是一样的，只是为了编程更加容易
+
+46、Promise对象
+	每一个异步任务立刻返回一个Promise对象，由于是立刻返回，所以可以采用同步操作的流程，Promise对象有一个then方法，允许指定回调函数在异步任务完成后立刻调用
+	Promise对象有三种状态：
+		异步操作未完成(pending)，异步操作已完成(resolved)，异步操作失败(rejected)
+		变化过程：
+			从未完成到已完成
+			从未完成到失败
+	Promise使用then方法添加回调函数，一个是异步操作成功时的回调函数，一个是异步操作失败时的回调函数
+		//下面创造一个Promise实例
+		var promise=new Promise(function(resolve,reject){
+			//异步操作的代码
+			if(/*异步操作成功*/){
+				resolve(value);
+			}
+			else{
+				reject(error);
+			}
+		});
+	resolve函数的作用是将Promise对象的状态从未完成变为已完成，并且将异步操作的结果作为参数传递出去,reject函数的作用将状态从未完成变成失败，将错误作为参数传递出去
+
+47、async函数
+	async函数返回一个Promise对象，可以适应then方法添加回调函数，当函数执行的时候，一旦遇到await就会先返回，等到触发的异步操作完成，再接着执行函数体内后面的语句
