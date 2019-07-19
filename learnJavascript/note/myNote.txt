@@ -162,7 +162,7 @@
 	set1.delete(1);//删除元素
 
 22、遍历Array,Map,Set
-	除了Array可以使用下标，Map和Set都不能使用下标，所以将他们定义为iterable类型
+	除了Array可以使用下标，Map和Set都不能使用下标，所以将他们（包括Array）定义为iterable类型
 	通过for...of循环遍历它们	
 	for...of与for...in区别不大，但是for...of会更好一点，因为for...of只包含对象本身的元素
 	iterable类型具有一个内置的方法forEach()，他的参数是一个函数，每次迭代就会调用这个函数
