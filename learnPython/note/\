@@ -1,0 +1,51 @@
+1、在python中，"hello world"*3 //表示3个这个字符串，不会出现语法错误
+		"hello world"+3 //会出现语法错误，因为string和int之间不兼容
+
+2、tmp=input("input a elem")
+	首先会输出字符串input a elem
+	然后会用户从键盘输入一个数据，并且将它传递给tmp
+
+3、python靠tab键而不是{}作为代码块
+
+4、条件语句
+	if a:
+		code ..
+	else:
+		cpde ..
+	用tab键作为缩进，然后用冒号:作为进入if条件语句代码块的地方
+
+5、内置函数
+	BIF(built-in function)
+
+6、强制类型转换
+	tmp2=int(tmp) 
+		将tmp转化为int类型，并且赋值给tmp2
+
+7、dir(__builtins__)
+	显示所有内置函数
+	help(function)
+		显示函数的作用
+
+8、字符串拼接
+	和java类似，都可以使用加号+，当然，甚至可以直接不使用加号+
+	和js差不多，字符串可以单引号和双引号，
+	当在字符串中有单引号时，此时为了不使用单引号，可以在外面使用双引号，这个做法和js一样
+		str="let's go"
+
+9、原始字符串
+	在字符串的最前面加上一个r，那么字符串就会使用原来的字符串，而不会进行转义
+		str=r'abc\nagag'	
+		print(str)	//结果会输出abc\nagag,因为这里使用了原始字符串
+		str=r'abc\ngng\'	//会报错，原始字符串最后面不能接反斜杠
+			此时，如果要在str结尾加反斜杠，那么可以使用字符串拼接的功能
+				str=r'abc\nabc''\\'
+
+10、长字符串
+	当字符串输入的时候，需要换行，那么就使用三引号
+		str="""abc
+		def"""
+
+11、bool类型
+	True
+	False
+		第一个为大写，后面小写

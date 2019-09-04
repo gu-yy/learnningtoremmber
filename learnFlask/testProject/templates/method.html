@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GYYMethod</title>
+</head>
+<body>
+    <form action="" method="POST">
+            <table>
+                    <tbody>
+                        <tr>
+                            <td>用户名：</td>
+                            <td><input type="text" name="methodName"></td>
+                        </tr>
+                        <tr>
+                            <td>密码：</td>
+                            <td><input type="password" name="methodPassword"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="submit" value="登录"></td>
+                        </tr>
+                    </tbody>
+                </table>
+    </form>
+    {% if error %}
+        <p style="color:red;">{{error}}</p>
+    {% endif %}
+</body>
+</html>

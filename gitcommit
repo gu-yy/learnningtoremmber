@@ -1,0 +1,17 @@
+git config --global user.name 'gu-yy'
+git config --global user.email 'gyy_110@126.com'
+
+git init
+git add *
+git status -s
+git commit -m '2'
+
+
+//如果是第一次向仓库提交需要先将本地仓库与远程仓库链接
+git remote add origin https://github.com/gu-yy/learnningtoremmber.git
+//origin就是指向远程仓库的指针
+
+
+git push -u origin master
+如果不行强制提交
+git push -u origin +masteru  

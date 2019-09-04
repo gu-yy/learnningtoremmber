@@ -1,5 +1,7 @@
 #include <iostream>
 #include <algorithm>
+#include <stack>
+#include <queue>
 using namespace std;
 
 bool compare(int a,int b){
@@ -12,17 +14,21 @@ bool compare(int a,int b){
 int main(){
 
 
-    //cout<<sizeof(int)<<endl;
-    int *p=new int();
-    cout<<sizeof(p)<<endl;
-    int *q=p+1;
-    //q=new int();
-    *q=1;
-    //cout<<*q<<endl;
-    //q=new int();
-    cout<<p<<endl<<q<<endl;
-    cout<<q-p<<endl;
-    //cout<<p<<endl<<(p+1*sizeof(int*))<<endl<<q;
-    //delete (p+1);
+    stack <int> sta;
+    queue <int*> que;
+    int * p=NULL;
+    que.push(p);
+    cout<<que.empty()<<endl;
+    sta.push(1);
+    sta.push(2);
+    int i=0;
+    while (!sta.empty())
+    {
+        i=sta.top();
+        sta.pop();
+        cout<<i<<endl;
+    }
+    
+    
     return 0;
 }

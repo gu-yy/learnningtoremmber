@@ -1,0 +1,11 @@
+{% extends 'baseInherit.html' %}
+
+{% block firstInherit %}
+    {{super()}}
+    <p>这是子模块的代码</p>
+{% endblock %}
+
+{% block gyy %}
+    {{self.firstInherit()}}
+    <p>这是block gyy中的代码</p>
+{% endblock %}

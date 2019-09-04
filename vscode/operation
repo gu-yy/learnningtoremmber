@@ -1,0 +1,7 @@
+1、按列选择：
+	alt+shift+鼠标左键选择
+2、插件
+	coder runner
+3、python代码的自动补全
+	点击左下角的设置，然后选择user，然后搜索python.autoComplete.addBrackets，在这个值中打上勾
+	最后重启vscode，python的自动补全功能就加上去了

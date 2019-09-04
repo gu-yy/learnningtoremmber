@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import content%}
+
+{% block myContent %}
+    {%if number==1 %}
+        {% for movie in movies %}
+            {{content(movie.url,movie.name,movie.score)}}
+        {% endfor %}
+    {% else %}
+        {% for tv in tvs %}
+            {{content(tv.url,tv.name,tv.score)}}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+

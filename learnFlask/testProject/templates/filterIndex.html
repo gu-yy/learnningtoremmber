@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>GYYFilterTemplate</title>
+    </head>
+    <body>
+        <p>使用过滤器的方法是：variableName | filterName</p> 
+        <p>这里使用的过滤器是abs,传递过来的变量是num</p>
+        <p>num | abs ==>  {{num | abs}}</p>
+        <p>default过滤器：{{signature | default('这个家伙很懒，没有留下任何数据',boolean=True)}}</p>
+        <p>jinja2自动开启了转义，所以不会执行脚本代码，会直接输出代码</p>
+        <p>{{escapestring}}</p>
+        <p>jinja2可以使用过滤器safe来标记当前字符串是安全的，不需要转义，结果如下</p>
+        <p>使用safe过滤器：{{escapestring | safe}}</p>
+        <p>可以关闭jinja2的自动转义功能</p>
+        {%autoescape off%}
+            <p>此时不需要safe过滤器{{escapestring}}</p>
+            <p>这个时候如果需要再次转义的话，就可以使用escape过滤器了</p>
+            <p>使用escape过滤器：{{escapestring | escape}}</p>
+        {%endautoescape%}
+        <p>format过滤器的使用=>我的名字是：{{"%s" | format(name)}}</p>
+        <p>使用-拼接列表中元素，原始列表：{{seq}}，拼接后的字符串：{{seq | join(d='-')}}</p>
+        <p>自定义过滤器，作用是删除字符串中的a=>原始字符串：{{mystring}}，过滤后的字符串：{{mystring | myFilter}}</p>
+        <p>下面使用了时间模块datetime，其中datetime.now()可以自动获取当前时间，datetime()可以自己初始化一个时间</p>
+        <p>{{createTime}}</p>
+        <p>创建的原始时间为：{{createTime}}，经过自定义时间过滤器处理后的时间时间为：{{createTime | myTimer}}</p>
+    </body>
+</html>

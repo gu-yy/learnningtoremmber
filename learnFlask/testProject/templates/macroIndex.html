@@ -1,0 +1,47 @@
+{% from "macrosImport.html" import inputImport %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>GYYMacro</title>
+    </head>
+    <body>
+        {% macro input(name="",value="",type="text") %}
+            <input type="{{type}}" name="{{name}}" value="{{value}}">
+        {% endmacro%}
+        <h1>登录页面</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <td>用户名：</td>
+                    <td>{{input("username")}}</td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td>{{input("password",type="password")}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{{input(value="提交",type="submit")}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>下面使用导入宏的形式</p>
+        <table>
+            <tbody>
+                <tr>
+                    <td>用户名：</td>
+                    <td>{{inputImport("username")}}</td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td>{{inputImport("password",type="password")}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{{inputImport(value="宏提交",type="submit")}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

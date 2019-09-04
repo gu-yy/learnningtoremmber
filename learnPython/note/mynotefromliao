@@ -1,0 +1,26 @@
+1、字符串
+	ord()		//将字符转化为整数表示
+	chr()		//将整数转化为字符表示
+		注意，这两个函数的参数都只能代表一个字符，而不是字符串
+	\u		//表示无符号数
+	python的字符串的类型是str,在内存中以unicode表示，一个字符对应了若干个字节
+		如果要将字符串在网上传输，或者保存到磁盘上，就需要把str变成以字节为单位的bytes
+		bytes类型的数据在python中用带b的前缀表示
+			x=b'abc'
+			'abc'.encode('ascii')		//b'abc'
+			'中文'.encode('utf-8')		//b'\xe4\xb8\xad\xe6\x96\x87'
+			解码
+			b'\xe4\xb8\xad\xe6\x96\x87'.decode('utf-8')		//中文
+			b'abc'.decode('utf-8')		//'abc'
+	len()		//求长度
+		len('abc')	//3
+		len('中文')	//2
+			当传入字符串时，len()求的是字符数
+
+2、列表索引
+	list[0]		//是第一个元素
+	list[-1]	//是最后一个元素
+		当索引值index为负的时候，就是从后面往前面开始索引
+
+3、set和map
+	set和map的唯一的区别是一个只有key，另一个是key-value

@@ -1,0 +1,44 @@
+*{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+.container{
+    width: 375px;
+    height: 667px;
+    background-color: pink;
+}
+.searchContainer{
+    padding: 14px 8px;
+    background-color: #41be57;
+}
+.inputSearch{
+    width:100%;
+    height: 30;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+.listContainer{
+    overflow: hidden;
+}
+.titleDiv{
+    overflow: hidden;
+}
+.moduleName{
+    float: left;
+    padding: 5px;
+}
+.moduleLink{
+    float:right;
+    padding: 5px;
+}
+.contentDiv{
+    float: left;
+    padding: 5px;
+    width: 115px;
+    height: 205px;
+    font-size: 12px;
+    text-align: center;
+}

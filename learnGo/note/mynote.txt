@@ -1,0 +1,340 @@
+1、Go没有类和继承，通过interface的概念来实现多态，它是编译型语言，编译器将源码编译成二进制格式（或字节码）
+2、Go语言的并发是基于goroutine的，goroutine类似于线程，但是并非线程，可以理解为虚拟线程，Go语言运行时会参与调度goroutine，并将goroutine合理分配到每个CPU中，最大限度使用CPU性能
+	在多个goroutine中，Go语言使用通道(channel)进行通信，channel是一种内置的数据解构，可以让用户在不同的goroutine之间同步发送具有类型的消息。因此让多个goroutine在他们之间发送消息而不是争夺统一数据使用权
+	程序可以将需要并发的环节设计为生产者和消费者模式，将数据放入通道。通道另一端的代码将这些数据进行并发计算并返回结果
+3、通道
+	channel chan<-tring//只能写的通道
+	channel <-chan string//只能读的通道
+	通过关键字go实现goroutine
+4、变量声明
+	var indentifier type
+	基本类型
+		bool
+		string
+		int,int8,int16,int32,int64
+		uint,uint8,uint16.uint32,uint64,uintptr
+		byte//uint8的别名
+		rune//int32的别名，代表一个Unicode码
+		float32,float64
+		complex64,complex128
+	当一个变量被声明以后，自动赋予这个变量该类型的0值，int=0,float=0.0,bool=false,string='',ptr(指针)=nil
+	单独声明err变量
+		var err error//用来打印错误信息的
+	标准格式
+		只声明而不初始化		
+			var 变量名 变量类型//行尾不需要分号
+			var a int
+		也可以同时进行初始化
+			var 变量名 变量类型=表达式
+			var a int=100
+			可以化简为
+			var a=100//因为a和100都是int，所以中间的int可以省略
+			var b=0.17//默认情况下如果不指定b的类型，编译器为了尽量提高精度，会将它默认设置为float64，所以如果需要使用float32，那么需要强制指定:var b float32=0.17
+			var c=float32(a)//将a进行强制类型转化，得到float32类型的变量c=100.00，float32()表示强制类型转换
+	批量声明格式
+		var(
+			a int
+			b string
+			c []float32
+			d func()bool
+			e struct{
+				x int
+			}
+		)//同时声明一组变量
+	简短格式
+		名字:=表达式
+		简短模式声明变量的限制
+			定义变量必须显示初始化
+			不能提供数据类型
+			只能用在函数内部
+		简短模式也能同时声明一组变量
+			i,j,s:=0,1,"abc"//此时i,j,s必须是没有定义过的变量
+		在多个简短格式的变量声明中，至少有一个新声明的变量出现在左值中，其他变量名可以是以前声明过的
+			i,j:=0,1
+			i,j,k:=1,2,3//此时也不会报错，即使i和j是以前定义过的，但是k是新定义的变量，所以不会报错
+5、变量赋值
+	多重赋值时，变量的左值和右值按照从左到右的顺序赋值
+		a:=100
+		b:=200
+		b,a=a,b//将a和b的值交换
+6、匿名变量（不配拥有姓名？？？vim怎么才能打出滑稽脸。。）
+	匿名变量就是一个下划线"_"，任何类型的值都可以赋值给它，但是它不能在后面有任何使用
+		func GetData()(int,int){
+			return 100,200	
+		}
+		a,_:=GetData()
+		_,b:=GetData()//因为每次只需要获取一个值，所以可以使用匿名变量代替另一个值
+	匿名变量不占用内存，不占用命名空间
+7、变量作用域
+	函数体外的变量被认为是全局变量，可以在整个包中使用，被导出后还能在其他包中使用，任何函数外部声明的变量（包级语法域）可以在同一个包的任何源文件中使用
+	函数的参数和返回值也是那个函数的局部变量
+	每一个{}都能够对应一个词法块
+	内部作用域的变量名会屏蔽外部作用域的相同的变量名
+		if f,err:=os.Open(fname);err!=nil{
+			return nil
+		}
+		f.ReadByte()//编译错误，f只在if的作用域
+		//解决方法1
+		f,err:=os.Open(fname)
+		iferr!=nil{
+			return ree
+		}
+		f.ReadByte
+		//解决方法2
+		if f,err:=os.Open(fanme);err!=nil{
+			return err
+		}else{
+			f.ReadByte()//此时不会报错，因为f还在if的作用域之中
+		}
+8、浮点数类型
+	float32提供6个十进制数的精度，float64提供15个十进制数的精度，其中float32的有效精度只有23位，其他都是用来作为指数和符号位
+	小数点前面和后面的数字都可能被省略，如.707或1.
+	当遇到很大或者很小的数用科学计数法写
+		const Avogadro=6.02214129e23//阿伏伽德罗常数
+		const Planck=6.62606957e-34//普朗克常数
+9、复数
+	complex64//包含32位实数和32位虚数
+	complex128//包含64位实数和64位虚数
+	内置的complex函数用于构建复数，内建的real和imag函数分别返回复数的实部和虚部
+		var x complex128=complex(1,2)//1+2i
+		var y=real(x)//1
+		var z=imag(x)//2
+	complex的实部和虚部都是float32，可以用%v来表示复数
+10、bool值
+	bool值可以和&&与||结合，并且能够达到短路计算的效果
+		短路计算是指当前面的运算可以确定整个表达式的结果，那么后面的表达式就不需要被执行
+			a,b:=1,2
+			a==0&&b==2//因为a==0可以确定整个与表达式的值为false，那么就不需要计算后面b==2这个表达式了
+	&&的优先级比||，&&对应逻辑乘法，||对应逻辑加法
+	bool值的true和false不能够和0或者1转换，也不能使用强制类型转换
+11、字符串是一种值类型，并且值不可改变，是一个定长数组
+		\n:换行
+		\r:回车
+		\t:tab键
+		\u或\U:Unicode字符
+		\\:反斜杠自身
+	非解释字符串，这种字符串使用反引号"`"括起来
+		`this is a raw string \n`//此时\n会被原样输出
+	Go中的字符串是由长度限定，而不是\0
+	可以通过len(str)来获取字符串str的长度
+	字符串的单个字节的内容可以像数组那样通过[]来获取
+	字符串拼接符是"+"，和java类似
+		s1,s2:="abc","def"
+		s3:=s1+s2//abcdef
+		Go的编译器会自动在行尾补全分号，所以在下面这种情况：
+			str:="abc"+
+				"def"//此时的加号必须放在上面那一行
+	定义字符串
+		当使用双引号定义字符串的时候，是不能换行的，必须在一行之内定义完
+			str="abcdef"
+		当使用反引号定义字符串的时候可以换行
+			str=`abc
+			     def`
+			fmt.Println(str)//输出结果如下：
+						abc
+						def
+12、字符类型
+	Go语言有两种字符类型，一种是uint8，也是byte类型，代表了ASCII码的一个字符，一种是rune类型，代表了一个UTF-8字符，当需要处理英文字符之外的复合字符时，需要用到rune类型，rune实际上是uint32类型
+		byte是uint8的别名
+			var ch byte='A'
+			var ch byte='\x41'//\x总是紧跟者长度为2的16进制数
+			var ch byte='\377'//\后面紧跟长度为3的八进制数
+			var ch uint8='A'//它们是一样的
+		rune是int32的别名，在内存中使用int来表示unicode(utf-8)
+			var ch int='\u0041'
+			var ch int='\U03B21234'//在书写unicode字符时，需要在十六进制数前面加前缀\u或者\U
+			//\u紧跟着长度为4的十六进制数，\U紧跟着长度为8的十六进制数
+				var c1='\u0041'
+				var c2='\u03B2'
+				var c3='\U00101234'
+				fmt.Printf("%d-%d-%d\n",c1,c2,c3)//输出整数integer:65-946-1053236
+				fmt.Printf("%c-%c-%c\n",c1,c2,c3)//输出字符character:A-β-r
+				fmt.Printf("%X-%X-%X\n",c1,c2,c3)//输出utf-8的bytes型41 - 3B2 - 101234
+				fmt.Printf("%U-%U-%U\n",c1,c2,c3)//输出utf-8的code point类型U+0041 - U+03B2 - U+101234
+			//%c输出字符，%v或者%d输出证书，%X输出十六进制数，%U输出格式为U+hhhh的字符串
+	UTF-8和Unicode的区别
+		Unicode是字符集，和ASCII字符集类似，我们所使用的每一个字符在字符集中都有一个对应的唯一的ID，例如a在Unicode和ASCII中的ID都是97，“你”在Unicode中的ID是20320
+		UTF-8是编码规则，将Unicode中的ID按照某种方式进行编码，Utf-8的编码长度从1个字节到4个字节，在UTF-8编码规则下，每个中文字符占用3个字节
+13、类型转换
+	必须显示类型转换
+		valueOfTypeB=typeB(valueOfTypeA)
+			a:=1.0
+			b:=int(a)//强制将浮点型转化为整型
+	取值范围大的数转化为取值范围小的数可能会产生截断误差
+14、指针
+	Go中指针被拆分为类型指针和切片，在Go中不能进行指针运算
+		指针地址、指针类型、指针取值
+			&表示取地址
+				ptr:=&v//这里表示取变量v的地址，这个地址在32位系统中占4个字节，在64位系统中占8个字节，当指针被定以后没有分配变量，那么指针的值为nil
+	通过new()创建指针
+		str:=new(string)//str就是一个string类型的指针
+15、常量
+	iota常量生成器，用于生成一组常量
+		type weekDay int
+		const{
+			Sunday weekDay=iota
+			Monday
+			Tuesday
+			Wednesday
+			Thursday
+			Friday
+			Saturday
+		}
+		iota处会被定义为0，其他的一次加1
+16、函数
+	func functionName([parameter list])[returnTypes]{
+		//函数体
+		//可以返回多个值
+		return a,b//同时返回a和b
+	}
+17、数组
+	数组声明：
+		var variableName [size] variableType
+	数组初始化：
+		var balance=[5]float32{1.0,1.1,1.2,1.3,1.4}//也可以省略[]中的数字，这样Go会根据{}中的元素个数来定义数组长度
+	多维数组：
+		var variableName [size1][size2][size3]...[sizeN] variableType
+18、结构体
+	首先需要定义结构体，之后才能使用结构体
+	定义结构体需要type和struct配合使用
+		type structVariableType struct{
+			member definition;
+			member definition;
+			...
+			member definition;
+		}
+	一旦有了结构体类型，就可以用这个结构体类型初始化变量
+		variableName:=structVariableType{value1,value2...valueN}
+	访问结构体成员使用点号，结构体.成员名
+		variableName.member
+	结构体指针
+		var structPointer *structVariableType
+		此时访问结构体的成员同样使用点号，结构体.成员名
+			structPointer.member
+	还有一种定义初始化结构体的方法，就是使用函数new(structName)
+		variableName:=new(structVariableType)
+19、切片(Slice)
+	切片是对数组的抽象，因为数组的长度固定从而不够灵活，所以切片作为一个内置类型，它的作用就是动态数组的功能
+	定义切片
+		var identifier []type//此时的切片是没有初始化的，就是identifier==nil
+	初始化切片
+		var identifier=make([]type,len)
+		identifier:=make([]type,len)
+		其中[]type是切片中元素类型，len是当前长度
+		也可将切片的最大长度加上：
+			make([]type,len,cap)//capbility
+			此时初始化后所有的元素都是0
+		也可以使用具体的元素初始化：
+			s:=[]int{1,2,3}//此时cap=len=3
+		使用数组初始化切片
+			s:=arr[:]//将整个数组用来初始化切片
+			s:=arr[startIndex:endIndex]//从数组的下标startIndex(包括startIndex)开始到数组的endIndex(不包括endIndex)结束，截取来初始化切片
+			s:=arr[startIndex:]//从数组的startIndex到数组最后的片段，初始化切片
+			s:=arr[:endIndex]//从数组的最开始到endIndex的片段来初始化切片
+		同理，也可以使用切片来初始化切片
+	切片是可以被索引的，索引的方法是len()和cap()方法
+		s:=make([]int,3,5)
+		len(s)//3
+		cap(s)//5
+	切片截取的方法也是通过中括号，然后中括号中用冒号分开初始索引位置和结束索引位置
+	为了增加切片的容量，我们必须创建更大的切片，并且把之前的切片内容拷贝过来
+		向切片添加元素
+			var numbers []int
+			numbers=append(numbers,1)//向切片添加了元素1
+			var numbers2=make([]int,len(numbers),cap(numbers)*2)//numbers2的容量是numbers的2倍
+			copy(numbers2,numbers)//将numbers拷贝到numbers2中
+20、Go语言中range关键字用于for循环中迭代数组(array)、切片(slice)、链表(channel)或者集合(map)的元素，在数组和切片中返回元素的索引值，在集合中返回key-value对应的key值
+	对于切片和数组：
+		s:=[]int{1,2,3}
+		for index,value:=range s{
+			//index返回的是索引，也就是下标
+			//value返回的是值，也就是该索引对应的值
+		}
+	对于map集合来说：
+		m:=map[string]string{"a":"apple","b":"banana"}
+		for key,value:=range m{
+			//key返回的是键
+			//value返回的是值
+			//其中[string]是键的类型，string是值的类型
+		}
+	对于一般的字符串，range也会返回两个值，第一个值索引值index，第二个是字符本身(Unicode的值本身)
+		for index,value:=range "gyy"{
+			//index是返回索引值，也就是字符的位置
+			//value是字符的Unicode值
+		}
+21、集合(map)
+	map是无序的键值对的集合，记住是无序的
+	声明map
+		var mapVariable map[keyType]valueType
+	初始化map
+		var mapVariable=make(map[keyType]valueType)//此时，map中的数据为空值
+	使用初始值去初始化map
+		mapVariable:=map[string]string{"a":"apple","b":"banana"}
+	向map中插入键值对
+		mapVariable["c"]="pear"
+	查看元素是否存在
+		value,ok:=mapVariable["c"]
+		//如果ok的值为true，那么说明键c在map中，并且值返回到value中
+	删除集合的元素delete()
+		delete(mapVariable,"c")//此时集合中键c对应的键值对就被删除了
+22、接口
+	接口的作用是将所有具有共性的方法定义在一起，任何其他类型只要实现了这些方法就实现了这个接口
+		type interfaceName interface{
+			methodName1 [returnType]
+			methodName2 [returnType]
+			...
+			methodName3 [returnType]
+		}//定义接口
+		
+		type structName struct{
+			
+		}//定义结构体
+		
+		func (structVariable structName)methodName1()[returnType]{
+
+		}//实现接口方法
+		func (structVariable structName)methodName2()[returnType]{
+
+		}//实现接口方法
+
+		/*调用接口和方法*/
+		var interfaceVariable interfaceName
+		interfaceVariable=new(structName)
+		interfaceVariable.methodName1()
+		/*也可以通过结构体来调用*/
+		structVariable:=structName{}//初始化一个结构体
+		structVariable.call()//调用接口中的方法
+23、错误处理
+	Go语言通过内置的错误接口提供了非常简单的错误处理机制
+	error类型是一个接口类型，定义如下：
+		type error interface{
+			Error() string
+		}
+	记一个fmt的函数的作用
+		fmt.Sprintf(paramter1,paramter2)//作用是将第二个参数paramter2写进paramter1中
+	实现error接口的Error()方法
+		type DivideError struct{
+			dividee int//被除数
+			divider int//除数
+		}
+		//实现Error()接口
+		func (de *DivideError) Error() string{
+			strFormat:=`
+				error,the divider is zero
+				dividee: %d
+				divider: 0`
+			return fmt.Sprintf(strFormat,de.dividee)//这个函数的作用是将de.dividee传进strFormat中的%d
+		}
+
+		//调用
+		dData:=DivideError{
+			//初始化类型
+		}
+		errorMsg:=dData.Error()//输出错误信息
+24、结构体内部的反引号编码成json字符串
+	type Human struct{
+		Name string `json:"englishName"//将struct编码成json字符串时，Name字段的key是englishName而不是Name
+		Age int `json:"-"`//编码成json字符串时，忽略这个字段
+		Hobby string `json:"hobby,omitempty"`//如果是空值，就不编码到json里面，否则使用hobby作为key
+		Score float64 `json:",omitempty"`//如果是空值，就不编码到json里面，否则沿用原来的名字编码到json里面Score
+	}

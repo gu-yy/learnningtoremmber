@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GYYInherit</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            text-decoration: none;
+        }
+        body{
+            /* background: url("../static/images/girl.jpg") ; */
+            background-image: url("../static/images/girl.jpg");
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    {% block firstInherit%}
+        <p>这是父模板的代码</p>
+    {% endblock%}
+    {% block gyy %}
+    {% endblock %}
+</body>
+</html>

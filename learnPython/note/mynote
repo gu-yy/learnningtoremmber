@@ -1,0 +1,1069 @@
+0、使用#注释，因为python是脚本语言
+	批量赋值
+		a,b=1,2		//a=1,b=2
+	批量赋值还可以使用序列进行赋值
+		a,b=[1,2]	//a=1,b=2
+
+1、在python中，"hello world"*3 //表示3个这个字符串，不会出现语法错误
+		"hello world"+3 //会出现语法错误，因为string和int之间不兼容
+
+2、tmp=input("input a elem")
+	首先会输出字符串input a elem
+	然后会用户从键盘输入一个数据，并且将它传递给tmp
+
+3、python靠tab键而不是{}作为代码块
+
+4、条件语句
+	if a:
+		code ..
+	elif b:
+		code ..
+	else:
+		cpde ..
+	用tab键作为缩进，然后用冒号:作为进入if条件语句代码块的地方
+
+5、内置函数
+	BIF(built-in function)
+
+6、强制类型转换
+	tmp2=int(tmp) 
+		将tmp转化为int类型，并且赋值给tmp2
+
+7、dir(__builtins__)
+	显示所有内置函数
+	help(function)
+		显示函数的作用
+
+8、字符串拼接
+	和java类似，都可以使用加号+，当然，甚至可以直接不使用加号+
+	和js差不多，字符串可以单引号和双引号，
+	当在字符串中有单引号时，此时为了不使用单引号，可以在外面使用双引号，这个做法和js一样
+		str="let's go"
+
+9、原始字符串
+	在字符串的最前面加上一个r，那么字符串就会使用原来的字符串，而不会进行转义
+		str=r'abc\nagag'	
+		print(str)	//结果会输出abc\nagag,因为这里使用了原始字符串
+		str=r'abc\ngng\'	//会报错，原始字符串最后面不能接反斜杠
+			此时，如果要在str结尾加反斜杠，那么可以使用字符串拼接的功能
+				str=r'abc\nabc''\\'
+
+10、长字符串
+	当字符串输入的时候，需要换行，那么就使用三引号
+		str="""abc
+		def"""
+
+11、bool类型
+	True
+	False
+		第一个为大写，后面小写
+
+12、循环
+	while 条件 :
+		code ...
+
+	for循环
+		for 目标 in 表达式:
+			循环体
+		str='gyy'
+		for i in str:
+			print(i,end=' ')	//这个print和Go语言的fmt.println差不多
+
+13、逻辑操作符
+	and 
+	or 
+	not
+		逻辑运算符优先级最低not>and>or	
+
+14、random模块
+	randint(1,10)	//返回一个1-10之间的随机的整数
+	需要先引入模块
+		import random
+		number=random.randint(1,10)
+
+15、类型转换
+	int()	//转化为整数，直接去掉小数部分
+		int(5.99)//5
+	float()	//转化为小数
+		float(5)//5.0
+	str()	//转化为字符串
+		str(5e19)//5e+19
+	获取变量类型
+		type()	//返回变量类型
+		type(5.2) //class 'float'
+		isinstance(a,b)	//a和b的类型一致就返回True否则返回False
+
+16、连续赋值
+	a=b=c=d=10	//所有的都是10
+
+17、除法
+	/表示精确除法
+	3/2=1.5
+	//表示整数除法
+	3//2=1
+	3.0//2=1.0
+
+18、次方
+	**
+	3**2=9	//表示3的2次方
+	**的算术优先级：
+		比左侧高，比右侧低
+		-3**2	//-9
+		3**-2	//3的负2次方=1/9=0.11111111111111111111111111111
+
+19、三元操作符
+	small=x if x<y else y
+		当x<y，就把x的值给small，否则把y的值给small
+
+20、断言
+	assert
+		assert 3>4
+			当assert条件错误的时候，会抛出异常AssertionError
+
+21、range()
+	range([start],stop,[step=1])
+		求一个范围内的数，包括start，不包括stop，start和step为可选参数
+		start的默认值是0，step的默认值是1
+		这个范围必须是整数
+	range(5)//默认开头为0，步长为1，所以值为0,1,2,3,4
+	range(2,6)//取开头，不要结尾2,3,4,5
+	range(2,10,2)//取开头，不要结尾，并且步长为2，所以值为2,4,6,8
+		可以和for循环连用
+		for i in range(5):
+			print(i)
+			//最终会打印0,1,2,3,4
+
+22、列表
+	像数组，但是所有数据类型不需要相同
+		mix=[1,'aaa',12.2,[1,2,3]]
+		emp=[]	//空列表
+	append()//添加元素
+		emp.append('bb')	//向数组中加入元素'bbb'，一次只能加入一个元素
+	extend()//将一个列表用来扩展另一个列表
+		emp.extend(mix)		//emp的值为['bbb',1,'aaa',12.2,[1,2,3]]
+	insert()//将元素插入指定位置
+		emp.insert(1,'kkk')	//emp的值为['bbb','kkk',1,'aaa',12.2,[1,2,3]]
+	remove()//删除指定元素
+		rmp.remove('kkk')	//删除'kkk'
+	del	//删除
+		del emp[1]	//删除单个元素
+		del emp 	//删除整个列表
+	pop()//弹出最后面的元素
+		emp.pop()	//最上面的元素被弹出来了，函数返回值是弹出的元素
+		emp.pop(1)	//弹出指定位置的元素
+	切片slice
+		emp[1:3]	//函数返回值为emp中元素1和2，和range()方法一样，包括开始不包括结尾
+		emp[:]		//省略参数表示从开头到结尾
+	count()//元素在列表中出现的位置
+	index()//返回元素出现在列表中位置
+		emp.index('a',1,4)	//在1-4中出现'a'的位置
+	reverse()//反转元素的位置
+	sort()//列表元素排序
+		sort(func,key,revserse)	//和c语言的sort差不多
+23、列表操作
+	加号+
+		emp+mix	//返回一个新的列表
+	*	
+		emp*3	//返回一个乘以3的列表，和前面字符串打印的时候乘以数字一样
+	in
+		检测元素在数组中
+	not in
+		检测元素不在列表中
+		'aaa' in emp	//True
+
+24、元组
+	创建元组
+		gyy=(1,2,3,4)
+		gyy1=(1,)
+		gyy2=1,2,3	//创建元组，逗号是关键
+		gyy3=()		//创建空元组
+	其他操作和列表差不多，但是不能更改数据
+		gyy[1]=3	//会报错，不能更改数据
+		3*(3,)		//数字乘以一个元组，结果是重复这个元组3次，(3,3,3)
+	更新和删除元组
+		通过切片的方式更新元组
+		gyy=gyy[:2]+(0,)+gyy[2:]	//将标签gyy贴到新元组中，新元组的值(1,2,0,3,4)
+		del gyy		//删除整个元组
+	python和java一样，有自动回收的功能
+
+25、字符串
+	和元组一样，不能被修改，如果要修改和元组的方式一样
+	字符串的常用方法
+		gyy='guyy'
+		capitalize()	//第一个字符改为大写
+		casefold()	//把整个字符串的所有字符改为小写
+		center(width)	//将字符串居中，并且使用空格填充至长度width的新字符串
+		count(sub[[start],[end]])		//返回sub在字符串中出现的次数，start和end参数表示范围，可选
+		encode(encoding='utf-8',errors='strict')	//以encoding指定的编码格式对字符串进行编码
+		endswith(sub[[start],[end]])		//检查字符串是否以sub结束，start和end是可选参数，是就返回True，不是就返回False
+		expandtabs([tabsize=8])			//将字符串中的\t转化为空格，默认一个\t转化为8个空格
+		find(sub[[start],[end]])		//检查sub是否在字符串中，如果在就返回索引值(第一个字符所在的位置)，如果不在就返回-1
+		index(sub[[start],[end]])		//和find方法一样，但是当sub不在字符串中的时候，会返回异常
+		isalnum()	//如果字符串至少有一个字符，并且所有的字符都是字母或者数字(可以同时包含字母或者数字)，就返回True，否则返回False
+		isalpha()	//如果字符串至少有一个字符，并且所有字符都是字母，则返回True，否则返回False
+		isdecimal()	//如果字符串只包含十进制数字则返回True，否则返回False
+		isdigit()	//如果字符串只包含数字则返回True，否则返回False
+		isspace()	//只包含空格就返回True
+		istitle()	//所有字符串都是标题化，所有单词都是大写开头，其余字母小写，则返回True
+		isupper()	//所有字符都是大写，则返回True
+		join(sub)	//将字符串插入到sub的所有字符之间
+			gyy='gyy'
+			gyy.join('123')		//结果为1gyy2gyy3
+		ljust(width)	//返回一个左对齐字符串，并且使用空格填充至width宽度
+		lower()		//转换字符串中所有大写字符为小写
+		lstrip()	//去掉字符串左边的所有空格
+		partition(sub[[start],[end]])	//找到子串sub，把字符串分成一个3元组(preSub,sub,folSub),如果字符串中不包含sub，则返回(‘原字符串’,'','')
+		replace(old,new[,count])	//把字符串中的old子串替换成new子字符串，如果count被指定了，那么替换的次数不超过count次
+		rfind(sub[[start],[end]])	//和find一样，只不过从右边开始查找
+		rindex()
+		rjust()
+		rpartition()
+		rstrip()			//以上方法都是从右边开始查找
+		split(sep=None,maxsplit)	//不带参数默认以空格作为分隔符分割字符串，如果maxsplit设置了，那么就仅仅分割maxsplit个子串，分割后的子串组成列表
+		splitlines(([keepends]))	//按照\n分割，返回一个包含各行作为元素的列表，如果keepends参数指定了，则返回keepends行
+		startswith(prefix[[start],[end]])	//判断是不是以prefix开头
+		strip([chars])		//删除字符串前面和后面的所有的空格，chars指定删除的字符
+		swapcase()		//反转字符串中的大小写
+		title()		//将字符串标题化
+		translate(table)	//根据table的规则，转换字符串中的字符，规则可以由str.maketrans('a','b')定制
+			gyy='aaaacccc'
+			gyy.translate(str.maketrans('c','b'))	//将结果转化为aaaabbbb
+		upper()		//转化字符串中的所有小写字符为大写
+		zfill(width)	//返回长度为width的字符串，原字符串右对齐，前边用0填充
+
+26、字符串格式化	format
+	'{0} aa {1} {2}'.format('oo','bb','cc')		//结果为ooaabbcc
+	以指定key的方式格式化
+	'{a} aa {b} {c}'.format(a='oo',b='bb',c='cc')	//结果为ooaabbcc
+	当混合使用的时候，不指定key的参数必须在指定key的参数之前，参照c++中的函数的默认参数的使用方法
+	'{0} aa {b} {c}'.format('oo',b='bb',c='cc')
+	'{a} aa {0} {c}'.format(a='oo','bb',c='cc')	//会报错
+	在这里使用花括号{}对参数进行转义，直接打印参数，而不是使用\进行转义
+		'{{0}}'.format('abc')	//这里不会将abc传入参数中，因为被转义，所以打印的结果是{0}
+	'{0:.1f}{1}'.format(21.321,'GB')	//结果为21.3GB，这里只保留1位小数，因为.1f
+	'%c' %97	//将ascii码转化为字符，结果为a
+	'%c%c%c' % (97,98,99)	//结果为abc，当有多个ascii码作为参数时，需要用小括号括起来
+	
+	%s	格式化字符串
+		'%s' % 'gyy'
+	%d	整数
+	%o	无符号八进制
+	%x或者%X	无符号十六进制
+	%f	浮点数，可以指定精度，默认6位
+	%e或者%E	科学计数法
+	%g或者%G	根据值的大小决定使用%f或者%e
+
+	格式化操作辅助命令
+	m.n	m是最小总宽度，n是小数点后面的位数，也就是说总位数少于m的时候，左端用0补齐
+	-	左对齐
+	+	在正数前面加上一个加号+
+	#	在八进制数前面显示'0'，在十六进制前面显示0x或者0X
+		'%#o' % 10
+			0o12
+	0	显示的数字前面填充0取代空格
+
+27、序列
+	序列包括列表，元组，字符串
+	list()
+		gyy='abc'
+		list(gyy)	//结果是['a','b','c'],将可迭代的对象转化为列表
+	tuple()
+		tuple(gyy)	//结果是('a','b','c'),将可迭代的对象转化为元组
+	str()
+		转化为字符串
+	len()	//返回长度
+	max()	//返回最大的值
+		max(gyy)	//返回c，注意他们的元素的类型必须是一样的
+	min()	//返回最小值
+	sum()	//求和
+		元素必须是数据类型才可以加，例如整数，浮点数
+		sum[iterable,[start]]	//start是可选参数，默认值为0，返回的结果是序列的元素之和再加上start的值
+	sorted()	//排序
+	reversed()	//反转
+		返回的值是一个迭代器，需要使用list()或者tuple()等等函数转化为列表或者元组
+	enumerate()	//将序列中每个元素变成一个元组，这个元组中包含的是位置和值
+		gyy=['a','b','c']
+		enumerate(gyy)	//[(0,'a'),(1,'b'),(2,'c')]
+	zip()	//合并两个序列，变成元组
+		a=[1,2,3,4,5]
+		b=[4,5,6,7,8,9]
+		list(zip(a,b))	//[(1,4),(2,5),(3,6),(4,7),(5,8)] 
+	以上函数的参数都是一个序列
+
+28、函数
+	def myfunc():
+		print('my first function')
+	def mysecfunc(params1,params2):
+		print(params1,params2)
+		return params1+params2
+	myfunc.__doc__		//打印帮助文档
+	help(myfunc)		//打印帮助文档
+
+	关键字参数	//和前面format类似
+		def myfunc(name,words):
+			print(name+'->'+words)
+		调用参数的时候，如果使用了关键字参数，那么就可以转换传入参数的顺序
+			myfunc(words='aa',name='gyy')		//结果同样是gyy->aa
+	默认参数
+		def myfunc(name='gyy',words='aa'):
+			print(name+'->'+words)
+		使用方法和c++的默认参数使用一样
+	收集参数（可变参数）
+		方法就是在参数前面加上一个星号*
+			def func(*params):
+				print('the length of the params:',len(params))
+				print('the second params:',params[1])
+			func(1,'aa',12)		//会打印'aa'
+		当函数还有正常参数的时候，就需要使用关键字参数给函数传递正常的参数
+			def func(*params,exp)
+				code....
+			func(1,2,3,exp=4)	//此时传递给exp的值就是4
+	当函数没有返回值的时候，会返回None
+	而且可以像Go一样返回多个值
+	在函数内修改全局变量的话，会在函数内部创建一个同名的局部变量，而全局变量不被改变
+	但是只要在函数内部在要先使用global关键字声明变量就可以不屏蔽外面了，也就是说可以在函数内部修改全局变量了
+		count=5
+		def func():
+			global count
+			count=10
+		//此时全局变量已经被修改为了10
+	
+29、内嵌函数和闭包
+	一个最简单的例子
+		def fun1():
+			print('func1 is being called')
+			def func2():
+				print('func2 is being called')
+			func2()
+
+	当调用函数func1的时候，也会执行func1内部的函数func2
+	当出了函数func1，func2就不能使用了
+
+	闭包
+		闭包主要就是返回一个函数对象
+		一个简单的例子
+			def func1(x):
+				def func2(y)
+					return x*y
+				return func2
+			i=func1(2)	//此时i的类型是一个函数，就是func2，只不过传入的x的值已经指定了，就是2
+					//i的内容如下
+					//	def func2(y):
+							return 2*y
+			i(5)		//此时返回的结果就是10
+
+		另一个例子
+			def func1():
+				x=5
+				def func2():
+					x*=5
+					return x
+				return func2()
+			func1()	//会报错，因为此时x相当于fucn2()的全局变量，在func2()中修改x的值的时候，python的机制就会屏蔽全局变量，所以此时x就相当于一个没有初始化的变量
+				//但是，如果在func2()中，没有对x的值做出修改，那么是不会报错的
+		
+		改进
+				//上面会报错。是因为x是因为在func1中，x的值被存入的地方是栈，而不是堆，所以会被屏蔽，如果是真正的全局变量，那么就是存在堆中，就不会被屏蔽了，就不会报错
+				//所以在python2中的一个改进的方法是传入一个容器，因为容器是不会被存在栈中的
+			def func1():
+				x=[5]	//传入一个列表
+				def func2():
+					x[0]*=x[0]
+					return x[0]
+				return func2()	//因为传入的是容器，相当于传入的是一个地址，所以地址传递，所以能够修改值
+		改进2
+			在python3中的新方法
+			使用nonlocal,使用方法和global关键字一样
+			def func1():
+				x=5
+				def func2():
+					nonlocal x	//声明x不是func2()中的一个新的局部变量
+					x*=x
+					return x
+				return func2()
+	
+30、lambda表达式
+	如果使用函数实现功能
+		def func(x):
+			return 2*x+1
+	可以使用lambda实现同样的功能
+		g=lambda x:2*x+1	//这里返回的g是一个函数，其中冒号前面的x是传入lambda表达式的参数，冒号后面是返回的值
+		g(5)			//得到结果11
+	如果lambda表示是具有多个参数，那么就逗号隔开
+		g=lambda x,y:x*y+1
+		g(4,4)			//结果为17
+
+31、两个使用的bif
+	filter()	//过滤器
+	filter([func],iterable)		//第一个参数可以是一个函数或者None，第二个参数是一个迭代器，比如序列
+					//当第一个参数为None的时候，就返回迭代器里面为True的值
+					// list(filter(None,[1,0,False,True]))		//结果为[1,True]
+					//当第一个参数不是None，而是一个函数的时候，则将后面迭代器中的每一个元素传入这个函数，对于返回值为True的元素，则从filter中返回
+						def func(x):
+							return x%2
+						tmp=range(10)
+						list(filter(func,tmp))	//结果是[1,3,5,7,9]
+					//上述过程使用lambda表达式实现
+						list(filter(lambda x:x%2,range(10)))
+	map()		//映射
+	map(func,iterable)		//将迭代器中每一个元素都作为函数func的参数传入，并且得到计算结果，然后将结果输出
+					// list(map(lambda x:x*2,range(5)))	//结果为[0,2,4,6,8]
+	这两个函数相当于js中的高阶函数
+
+32、递归
+	python3的默认递归的深度是100层，可以通过以下方法修改深度。超过定义的最大深度，就会报错
+		import sys
+		sys.setrecursionlimit(1000)	//此时设置的深度就是1000层	
+
+33、字典
+	由大括号指定
+	dict={'a':'aa','b':'bb','c':'cc'}
+	dict['b']	//结果为'bb'
+	dict2={}	//创建空字典
+	其他创建方式
+		dict=dict((('1',1),('2',2)))	//传进去的参数是元组，第二层括号的作用是将元组转化为map映射
+		dict=(1='q',2='a')		//这样的情况下，键是不能够加引号的
+		dict[2]='b'	//转换键值
+		dict[3]='f'	//增加键值
+	formatkeys用法
+		dict={}
+		dict.formatkeys((1,2,3))	//{1:None,2:None,3:None}
+		dict.formatkeys((1,2,3),'num')	//{1:'num',2:'num',3:'num'}
+	keys()		//返回所有的键
+	values()	//返回所有的值
+	items()		//返回所有的键值对
+	get()
+		dict.get(key)		//返回键的值，当键不存在的时候，返回None
+		dict.get(key,info)	//当不存在键key的时候，返回信息info
+	clear()		//清空字典
+	copy()		//和直接等号不一样，直接等号只是增加了一个名字标签，copy()才是真正在内存中复制了字典
+	pop(key)	//弹出键值对
+	popitem()	//随机弹出一个键值对
+	setdefault()	
+		dict.setdefault(6)	//查找键6，如果不存在就向字典中加入键，对应的值为None
+		dict.setdefault(6,'f')	//查找键6，如果不存在就增加键值对6:'f'
+	update()
+		dict.update(dict2)	//用dict2去更新dict，如果键存在就更新值，否则插入键值对
+
+34、集合set
+	创建集合的方法
+		1）将一堆元素用{}括起来	set1={1,2,3,4}		//集合中元素是唯一的
+		2）使用工厂函数set(),传入的参数是一个序列	set1=set('abc')	//结果是{'a','b','c'}
+	add()		//添加元素
+	remove()	//移除元素
+	frozenset()	//定义不可变集合
+		参数是一个序列
+
+35、文件
+	打开文件open(filename,operation)
+		'r'		//以只读方式打开文件
+		'w'		//以写入的方式打开文件，会覆盖已存在的文件以及内容
+		'x'		//如果文件已经存在，使用这个模式打开文件会出现异常
+		'a'		//以写入的方式打开文件，如果文件存在，则在末尾追加写入
+		'b'		//以二进制模式打开文件
+		't'		//以文本模式打开文件（默认的模式）
+		'+'		//可读写模式打开文件（可添加到其他模式中使用）
+		'U'		//通用换行符支持
+	f.close()		//关闭文件
+	f.read(size=-1)		//从文件读取size个字符，当未给定size或者size为负，那么读取剩余的所有字符，然后作为字符串返回
+	f.readline()		//读取一行，遇到\n停止
+	f.write(str)		//将字符串str写入文件，写入文件后，需要执行close()，才会真正写入到文件中，否则数据是保存在缓冲区里面的
+	f.writelines(seq)	//向文件写入字符序列seq,seq是一个可以返回字符串的可迭代的对象
+	f.seek(offset,from)	//移动文件指针，从from开始移动offset个位置，from为0表示从起始位置开始，1表示从当前位置开始，为2表示从文件末尾
+	f.tell()		//返回文件指针的位置
+		f=open(filename)
+		for eachLine in f:	//f是一个文件对象，可以用for循环取出所有内容
+			print(eachLine)
+
+36、模块
+	模块是包含自定义函数和变量的文件，其后缀名是.py,模块可以被其他程序引入，然后使用这个模块中的函数等功能
+	os:	使得python程序不需要关注系统的底层实现
+		os模块下关于文件系统的常用的函数
+		getcwd()			//返回当前工作目录
+		chdir(path)			//改变工作目录
+		listdir(path='.')		//列出指定目录下的所有文件
+		mkdir(path)			//创建单层目录，如果目录已经存在，则抛出异常
+		makedirs(path)			//递归创建多层目录，如果目录存在，则抛出异常
+		remove(path)			//删除文件
+		rmdir(path)			//删除单层目录，如果目录非空，则抛出异常
+		removedirs(path)		//递归删除目录，从子目录到父目录逐层删除，遇到非空目录，则抛出异常
+		rename(old,new)			//将文件old重命名为new
+		system(command)			//运行系统的shell命令
+		walk(top)			//遍历top路径下的所有的子目录，返回一个三元组：(路径,[包含目录],[包含文件])
+		os.curdir			//当前目录.
+		os.pardir			//父目录..
+		os.sep				//路径分隔符，windows下'\\'，linux下为'/'
+
+		os.path模块下关于路径常用的函数使用方法
+		basename(path)			//去掉目录路径，返回文件名
+		dirname(path)			//去掉文件名，单独返回目录路径
+		join(path1[,path2[,...]])	//将path1,path2个部分组合成一个路径名
+		split(path)			//分割文件名与路径，返回元组(f_path,f_name),如果path完全是目录，那么最后一个目录作为文件名分离
+		splitext(path)			//分离文件名与扩展名，返回元组(f_name,f_extension)元组
+		getsize(file)			//返回指定文件的尺寸，单位是字节
+		getatime(file)			//返回指定文件最近的访问时间(浮点型秒数，可以用time模块的gmtime()或者localtime()函数换算)
+		getctime(file)			//返回指定文件的创建时间
+		getmtime(file)			//返回指定文件的修改时间
+		exist(path)			//判断指定路径(目录或者文件)是否存在
+		isabs(path)			//判断指定路径是否为绝对路径
+		isdir(path)			//判断指定路径是否存在并且为一个目录
+		isfile(path)			//判断指定路径是否存在并且为一个文件
+		islink(path)			//判断指定路径是否存在并且为一个符号连接
+		ismount(path)			//判断指定路径是否存在并且是一个挂载点
+		samefile(path1,path2)		//判断path1,path2两个路径是否指向同一个文件
+
+37、pickle模块
+	这是一个令人惊叹的模块
+		它的作用是将一个类型的数据，例如序列等等转化为二进制数据，然后以二进制的形式写入文件，后面还可以读取二进制文件，并且将数据恢复为原来的数据类型
+			import pickle
+			pickFile=open('test','wb')		//一定要加b,因为是将数据以二进制的形式写入文件
+			myList=['a',1,2,'b']
+			pickle.dump(myList,pickFile)		//dump()函数将列表写入pickFile
+			pickFile.close()
+			pickFile=open('test','rb')
+			myList2=pick.load(pickFile)		//load()将数据从文件读取出来，同样以二进制的形式
+								//myList2=['a',1,2,'b']
+
+38、异常处理Exception
+	几个常用的异常
+		AssertionError				//断言语句(assert)失败，当assert语句为假的时候抛出
+		AttributeError				//尝试访问未知的对象属性，当访问的对象的属性不存在时，抛出这个异常
+		IndexError				//索引超出序列范围
+		KeyError				//字典中的键不存在map
+		NameError				//访问一个不存在的变量
+		OSError					//操作系统产生的异常(例如打开一个不存在的文件)
+		OverflowError				//数值运算超出最大的限制
+		TypeError				//类型不匹配
+		ZeroDivisionError			//除数为0
+	捕获并且处理异常
+		try:
+			检测范围代码
+		except Exception[as reason]:
+			出现异常的后续处理代码
+				感觉这个和java的异常处理一样啊
+			reason是自定义的一个变量，里面包含了错误信息，可以先用str()转化为字符串然后打印
+			print(str(reason))
+			示例代码：
+				try:
+					sum=1+'1'	//TypeError
+					f=open('te.txt')	//OSError
+				except (TypeError,OSError) as reason:		//同时捕获两个异常
+					print(str(reason))		
+				//except TypeError as reason:
+				//	print(str(reason))
+				//except OSError as reason:
+				//	print(str(reason))			//分开捕获
+			try:	
+				检测范围
+			except Exception [as reason]:
+				出现异常后处理的代码
+			finally:
+				无论如何都会执行的代码				//因为出现异常后，后面的代码就不会执行，而是直接调到捕获异常的代码的地方，然后退出程序，但是finally的代码就算出现了异常也会执行
+			raise		//自己引出异常
+				raise gyy
+					//引出异常gyy
+
+39、with语句
+	with语句的主要的作用就是可以自己关闭打开的文件
+		with open('test.txt','r') as f:		//文件指针就是f
+
+40、导入模块
+	import easygui as g		//此时g就是模块easygui的别名
+
+41、类class
+	类名以大写字母开头
+		class Gyy:
+			#distribution
+			name='gyy'
+			weight=100
+			#function
+			def run(self):
+				print('I'm runing')
+		//创建实例
+		person=Gyy()
+		person.run()		//I'm runing
+		
+		class MyList(list):	//此时类MyList继承了list这个类,没有继承就不需要加小括号
+			pass		//pass是一个占位符，表示不做任何事
+	示例代码
+		class Ball:	
+			def setName(self,name):
+				self.name=name		//self就相当于c++,js中的this指针
+			def kick(self):
+				print(self.name)
+		#实例化对象
+			a=Ball()
+
+	可以通过重写构造方法然后传入参数，构造方法是__init__()
+		class Ball:
+			def __init__(self,name):	//还可以设置默认参数def __init__(self,name='ball a')
+				self.name=name
+			def kick(self):
+				print(self.name)
+		#实例化对象
+			a=Ball('ball a')		
+
+	属性的私有化
+		class Person:
+			name='gyy'
+			__age=18		//名字前面不加下划线就是公有变量，否则就是私有变量
+	事实上在python中只是将私有变量变了一个名字而已，传入正确的名字同样可以访问，正确的名字_ClassName_distributionName
+		例如上面的_age属性：
+			p=Person()
+			p._Person_age		//18
+
+42、继承
+	子类定义与父类相同的属性和方法会覆盖父类的属性和方法
+	当子类和父类的方法名相同，并且子类需要使用父类的方法，那么有两种方法可以实现
+		import random as r
+		class Fish:
+			def __init__(self)
+			self.x=r.randint(0,10)
+			self.y=r.randint(0,10)
+		class Shark(Fish):
+			def __init__(self):
+				Fish.__init__(self)	//调用没有绑定父类的方法，因为传入的self参数是指向子类的
+				#另一种实现的方法，使用super()方法
+				#super().__init__()
+
+	多重继承
+		class DeriverClassName(Base1,Base2,Base3):		//小括号中添加多个基类，就是多重继承
+			...					
+
+43、组合
+	就是将若干个类的实例化放到一个新的构造方法中，例如：
+		class Turtle:
+			def __init__(self,x)
+				self.num=x
+		class Fish:
+			def __init__(self,x)
+				self.num=x
+		class Pool:
+			def __init__(self,x,y):
+				self.turtle=Turtle(x)
+				self.fish=Fish(y)
+			def printNum(self):
+				print('there are %d turtles and %d fishes' % (self.turtle.num,self.fish.num))
+
+44、类定义，类对象，实例对象
+			
+	
+				|-------->实例对象
+				|
+	类定义----->类对象--------------->实例对象
+				|
+				|-------->实例对象
+
+	如果属性名和方法名相同，属性会覆盖方法
+
+45、一些相关的bif
+	issubclass(class,classinfo)		//如果class是classinfo的子类，那么就返回true，并且一个类被认为是自身的子类
+	isinstance(object,classinfo)		//检查实例对象object是不是类classinfo的实例对象，第二个参数可以是类的元组，只要其中一个元素满足条件，就返回true
+	hasattr(object,name)			//检查name是不是对象object的属性，记得第二个参数一定要转化成字符串然后传进去
+	getattr(object,name[,default])		//返回对象object的属性name,记得要将name转换为字符串，default是一个可选参数，当属性不存在时，如果指定了default那么就返回deault否则就抛出异常
+	setattr(object,name,value)		//给对象object的属性name设置一个值value，如果属性name不村子啊，那么就添加属性
+	delattr(object,name)			//删除对象object中的属性name，如果属性不存在，那么就抛出异常
+	property(fget=None,fset=None,fdel=None,doc=NOne)
+		class C:
+			def __init__(self,size=10):
+				self.size=size
+			def getSize(self):
+				return self.size
+			def setSize(self,value):
+				self.size=value
+			def delSize(self):
+				del self.size
+			x=property(getSize,setSize,delSize)
+		c1=C()	
+		c1.x		//调用getSize()方法
+		c1.x=18		//调用setSize()方法
+		del c1.x	//调用delSize方法
+
+46、传说中的魔法方法
+	魔法方法被双下划线包围：
+		__init__
+	魔法方法是面向对象的Python的一切
+	__init__(self[,...])	//构造方法
+	__new__(cls[,...])	//在对象实例化之前被调用，第一个参数是class(类)
+		class CapStr(str):						//__new__是在__init__之前执行的，所以在这里重写__new__方法
+			def __new__(cls,string):				//将字符串变为大写
+				string=string.upper()
+				return str.__new__(cls,string)			//然后调用父类的__new__
+		a=CapStr("Gyy")		//结果a是GYY
+	__del__(self)		//相当于一个析构器，当所有关于这个对象的引用都被del的时候，才会调用__del_)方法
+
+	__add__(self,other)		//定义了对象self的加法，和c++中的重写符号方法一样
+			注意一个示例代码
+				class TryInt(int):
+					def __add__(self,other):
+						return self+other
+				a=TryInt(3)
+				b=TryInt(5)
+				a+b	//此时会无限递归的运行下去，因为一直调用的是TryInt类的方法，这个这个类的加法又是这两个对象相加
+				
+				//更改的方式
+					def __add__(self,other):
+						return int(self)+int(other)		//将对象a和b的类型由TryInt转化为int，所以就是调用int类的加法就不会无限递归了
+	__sub__(self,other)		//减法-
+	__mul__(self,other)		//乘法*
+	__truediv__(self,other)		//真除法/
+	__floordiv(self,other)		//整数除法//
+	__mod__(self,other)		//取余%
+	__divmod__(self,other)		//定义当被divmod()调用时的行为,例如divmod(a,b),返回的值为一个元组(a//b,a%b)
+	__pow__(self,other[,modulo])	//定义当被power()调用或者**运算时的行为
+	__lshift__(self,other)		//按位左移<<
+	__rshift__(self,other)		//按位右移>>
+	__and__(self,other)		//按位与&
+	__xor__(self,other)		//按位异或^
+	__or__(self,other)		//按位或|
+
+	上面的操作符函数都是正向操作的函数，在前面加一个r就反向操作符
+	__radd__(self,other)		//加法
+	__rsub__(self,other)             //减法-
+        __rmul__(self,other)             //乘法*
+        __rtruediv__(self,other)         //真除法/
+        __rfloordiv(self,other)          //整数除法//
+        __rmod__(self,other)             //取余%
+        __rdivmod__(self,other)          //定义当被divmod()调用时的行为,例如divmod(a,b),返回的值为一个元组(a//b,a%b)
+        __rpow__(self,other[,modulo])    //定义当被power()调用或者**运算时的行为
+        __rlshift__(self,other)          //按位左移<<
+        __rrshift__(self,other)          //按位右移>>
+        __rand__(self,other)             //按位与&
+        __rxor__(self,other)             //按位异或^
+        __ror__(self,other)              //按位或|
+		当操作符左边的数没有对应操作符的魔法函数的时候，就会调用右边操作数对应的反操作符函数
+			class Nint(int):
+				def __rsub__(self,other):
+					return int.__sub__(self,other)
+			a=Nint(5)	//a=5
+			3-a		//结果是2
+			因为3是一个数，不是由int(3)转化来的对象，所以它没有-对应的操作符函数__sub__(self,other)，所以会执行a的反操作符函数__rsub__(self,other)
+			此时self=a,other=3
+			所以上面的代码中int.__sub__(self,other)===5-3=2
+	在上面的魔法函数前面加上i，就是对应的增量运算符函数
+	例如__iadd__(self,other)		//对应了self+=other
+
+	一元操作符函数
+	__neg__(self)		//定义正号+
+	__pos__(self)		//负号-
+	__abs__(self)		//定义abs()调用时的行为
+	__invert__(self)	//定义按位求反的行为~x
+	
+	__str__(self)		//这个方法可以在print()中使用时直接打印字符串
+			class A:
+				def __str__(self):
+					return 'aaa'
+			a=A()
+			print(a)	//打印'aaa'
+			class B:
+				def __repr__(self):
+					return 'bbb'
+			b=B()
+			b		//会直接打印'bbb'
+
+47、时间模块
+	import time as t 	//这个模块记录了关于时间的方法
+
+48、魔法函数访问对象属性
+	__getattr__(self,name)			//定义当用户获取一个不存在的属性时的行为
+	__getattribute__(self,name)		//定义当该类的属性被访问时的行为
+	__setattr__(self,name,value)		//定义当一个属性被设置时的行为
+	__delattr__(self,name)			//定义当一个属性被删除时的行为
+		示例代码
+			class C:
+				def __getattribute__(self,name):
+					print('getattribute')
+					return super().__getattribute__(name)		//super()会自动找到当前类对应的基类，并且通过super()调用基类的方法的时候，不需要传入self参数
+				def __getattr__(self,name):
+					print('getattr')
+				def __setattr__(self,name,value):
+					print('setattr')
+					super().__setattr__(name,value)			//同样通过super()调用基类的方法不需要传入self参数
+				def __delattr__(self,name):
+					print('delattr')
+					super().__delattr__(name)	
+			
+			c=C()
+			c.x		//输出getattribute
+					//输出getattr
+			c.x=1		//输出setattr
+			c.x		//输出getattribute
+					//输出1
+			del c.x		//输出delattr
+	
+	使用魔法方法有可能陷入无限循环，那么此时可以想办法调用基类的魔法方法或者使用__dict__属性
+	__dict__属性会返回一个字典，对应这个对象的所有的属性值
+		class Rectangle:
+			def __init__(self,width=0,height=0)
+				self.width=width
+				self.height=height
+			def __setattr__(self,name,value)
+				if name=='square'
+					self.width=value
+					self.height=value
+				else:
+					super().__setattr__(name,value)
+					//self.__dict__[name]=value	//因为此时感觉是给__dict__属性赋值，不是普通属性，所以不会调用__setattr__()??
+
+49、描述符
+	描述符就是将某种特殊类型的类的实例指派给另一个类的属性
+	__get__(self,instance,owner)		//用于访问属性，将返回它的属性值
+	__set__(self,instance,value)		//将在属性分配操作中调用，不返回任何内容
+	__delete__(self,instance)		//控制删除操作，不返回任何内容
+
+	自己实现property函数
+		class Myproperty:
+			def __init__(self,fget=None,fset=None,fdel=None):
+				self.fget=fget
+				self.fset=fset
+				self.fdel=fdel
+			def __get__(self,instance,owner):
+				return self.fget(instance)
+			def __set__(self,instance,value):
+				self.fset(instance,value)
+			def __delete__(self,instance):
+				self.fdel(instance)
+	
+		class C:
+			def __init__(self):
+				self._x=None
+			def getx(self):
+				return self._x
+			def setx(self,value):
+				self._x=value
+			def delx(self):
+				del self._x
+
+			x=Myproperty(getx,setx,delx)
+
+		c=C()
+		C.x='gyy'		//赋值了
+
+	天气示例代码
+		class Celsius:
+			def __init__(self,value=26):
+				self.value=float(value)
+			def __get__(self,instance,owner):
+				return self.value
+			def __set__(self,instance,value):
+				self.value=float(value)			//instance指向的是Temperature这个类对象
+		
+		class Fahrenheit:
+			def __get__(self,instance,owner):
+				return instance.cel*1.8+32
+			def __set__(self,instance,value):
+				instance.cel=(float(value)-32)/1.8
+		class Temperature:
+			cel=Celsius()		//使用描述符
+			fah=Fahrenheit()
+
+50、容器
+	不可变容器
+		需要定义__len__()和__getitem__()方法
+	可变容器
+		需要定义__len()__,__getitem__(),__setitem__()和__delitem()方法
+
+	__len__(self)			//定义当被len()调用时的行为，返回容器中元素的个数
+	__getitem__(self,key)		//定义获取容器中指定元素的行为，相当于self[key]
+	__setitem__(self,key,value)	//定义设置容器中指定元素的行为，相当于self[key]=value
+	__delitem__(self,key)		//定义删除容器中指定元素的行为，相当于del self[key]
+	__iter__(self)			//定义当迭代容器中的元素的行为
+	__reversed__(self)		//定义当被reversed()调用时的行为
+	__contains__(self,item)		//定义当使用成员测试运算符(in 或者not in)时的行为
+		定义容器示例代码
+			首先一个字典的方法
+				dict.fromkeys(seq[,value])	//将序列的元素作为字典的键，value为对应的初始值
+		class CountList:
+			def __init__(self,*args):		//*args表示为可变数量的参数
+				self.value=[x for in args]	//此时self.value是一个列表
+				self.count={}.fromkeys(range(len(self.value)),0)	
+			def __len__(self):
+				return len(self.value)
+			def __getitem__(self,key):
+				self.count[key]+=1
+				return self.value[key]
+
+51、迭代
+	每一次迭代就相当于每一次循环，并且每一次迭代得到的结果是下一次迭代的初始值
+	使用for in遍历字典得到的是它的键
+	iter()创建一个迭代器	对应的魔法方法__iter__()
+	next()获取迭代器中的值  对应的魔法方法__next__()
+		gyy='gyy'
+		it=iter(gyy)
+		next(it)	//g
+		next(it)	//y
+		next(it)	//y
+
+	自己创建一个迭代器，就要实现上面两个魔法方法
+		class Fibs:
+			def __init__(self,a=0,b=1):
+				self.a=a
+				self.b=b
+			def __iter__(self):
+				return self
+			def __next__(self):
+				self.a,self.b=self.b,self.a+self.b
+				return self.a
+		fibs=Fibs()
+		for each in fibs:
+			if each < 20:
+				print(each)
+			else:
+				break
+	以上就是两种方式遍历迭代器
+		next(fibs)
+		for each in fibs
+
+52、生成器
+	和Go语言的生成器差不多，都是通过yield实现的
+	示例代码
+		def myGenerator():
+			yield 1
+			yield 2
+		myG=myGenerator()
+		next(myG)	//输出1
+		next(myG)       //输出2
+		或者使用for in
+		//for i in myGenerator():
+			print(i)	//打印1,2
+
+	列表推导式
+		a=[i for i in range(100) if ((not(i%2)) and (i%3))]	//加了这么多括号是为了好理解
+		原式为：
+		a=[i for i in range(100) if not(i%2) and i%3]
+	字典推导式
+		b={i:i%2==0 for i in range}		//也就是说for循环前面的内容就是即将加入的元素
+	集合推导式
+		c={i for i in [1,1,2,3,4,5,6,6]}	//结果{1,2,3,4,5,6}
+	生成器推导式
+		e=(i for i in range(10))		//小括号不是元组推导式，而是生成器哦
+		next(e)	//1
+		next(e) //2
+		next(e) //3
+
+53、模块
+	直接看示例代码吧
+		在hello.py文件中
+			def hi():
+				print('hi,gyy')
+		在另一个文件test.py中
+			import hello 		//这里不要加后缀名.py
+			hello.hi()		//就会打印hi,gyy
+	
+	导入模块的方法
+		1)import 模块名			//就和上面差不多
+		2)from 模块名 import 函数名	
+			在test.py文件中
+			from hello import hi 	//如果有多个函数中间用逗号隔开		
+			from hello import *	//使用*导入模块中所有的命名空间，包括变量名，函数名0
+			hi()			//会打印hi,gyy
+		3)import 模块名 as 新名字	//前面用过
+
+	模块就是程序，程序就是模块
+
+54、if __name__=='__main__'
+	示例
+		在hello.py文件中
+		def hi():
+			print('hi gyy')
+		if __name__=='__main__'		//在这个地方如果不加这个判断，那么当这个模块被导入其他包，它会在其他包中执行下面这个hi()函数，这个hi()函数在这个模块中执行是为了测试模块功能的
+			hi()
+
+		在test.py文件中
+		import hello from hi
+		__name__=='main'
+		hello.__name__=='hello'		//此时在hello.py那个文件中，它的__name__='hello',而不是'__main__',所以hello.py里面的hi()函数不会执行
+		hi()	//打印hi gyy
+		
+	搜索路径
+		import sys
+		sys.path		//python会在这个路径下面去查找模块
+		sys.path是一个列表，所以当自己写的模块放到某个路径下面时，需要将绝对路径加入到这个列表中
+		sys.path.append('/home/gyy')	//此后，python也会在这个路径下面找导入的模块
+	
+	包(package)
+		1)创建一个文件夹，然后将模块放入这个文件夹，文件夹的名字就是包的名字
+		2)在文件夹中创建一个__init__.py的模块文件，内容可以为空
+		导入包中的模块的方式
+		import 包名.模块名
+			import packageName.moduleName
+
+55、装饰器
+	装饰器分为函数装饰器和类装饰器
+	函数装饰器	在不改变原来函数的功能的前提下，增加原来函数的功能
+		def useLogging(func):
+			def wrapper():
+				logging.warn("%s is running" % func.__name__)
+				return func()		#把foo函数传进来时，执行func()就相当于执行foo()
+			return wrapper
+		#def foo():
+		#	print("i am foo")
+
+		@useLogging	#这个@useLogging === foo=useLogging(foo) 此时foo相当于wrapper
+		def foo():
+			print("i am foo")
+		foo()	
+	如果foo函数需要参数的话：
+		def useLogging(func):
+                        def wrapper(*args,**kwargs):		//*args表示可变参数的数组，**kwargs表示可变参数的字典，当函数参数有默认值的时候使用，如def func(a=1)
+                                logging.warn("%s is running" % func.__name__)
+                                return func(*args,**kwargs)           #把foo函数传进来时，执行func()就相当于执行foo()
+                        return wrapper
+               
+                @useLogging     #这个@useLogging === foo=useLogging(foo) 此时foo相当于wrapper
+                def foo(*args,**kwargs):
+                        print("i am foo")
+                foo([],{})
+	装饰器本身带参数
+		一般情况下，装饰器携带了唯一的参数，就是我们的业务函数，那么如果装饰器还需要其他参数：
+		def useLogging(level):		#传入日志级别这个参数
+			def decorator(func):	#真正的装饰器
+				def wrapper(*args,**kwargs):
+					if level=="warn":
+						logging.warn("%s is running" % func.__name__)
+					elif level=="info":
+						logging.warn("%s is running" %s func.__name__)
+					return func(*args,**kwargs)
+				return wrapper
+			return decorator		#这里就是返回真正的装饰器
+	
+		@useLogging("warn")	#返回decorator 也就是说@useLogging("warn")==@decorator
+		def foo(name='foo'):
+			print("i am %s" % name)
+
+		foo()
+	
+	类装饰器
+		使用类装饰器主要是通过重写__call__(self)方法
+		class Foo(object):
+			def __init__(self,func):
+				self._func=func
+			def __call__(self):
+				print("class decorator running")
+				self._func()
+				print("class decorator ending")
+		@Foo		#因为函数也是一个对象，所以@Foo == bar=Foo(bar)一样的
+		def bar():
+			print("bar")
+		bar()
+
+	此时使用装饰器，原函数bar的元信息docstring,__name__都变了，变成装饰器的元信息了
+	functools.wraps本身就是一个装饰器，它的作用是将原函数的元信息拷贝到装饰器的func函数中
+		from functools import wraps
+		def logged(func):
+			@wraps(func)
+			def withLogging(*agrs,**kwargs):
+				...
+			return withLogging
+		@logged
+		def f(x):
+			...
+		
+	一个函数还可以同时被多个装饰器定义
+		@a
+		@b
+		@c
+		def f()
+			pass
+		执行顺序为从里到外
+			f=a(b(c(f)))

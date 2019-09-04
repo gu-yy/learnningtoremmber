@@ -1,0 +1,623 @@
+1、视图
+	视图是一个应用对请求进行相应的函数
+	Flask通过模型把进来的URL匹配到对应的处理视图，视图返回数据，Flask把数据变成出去的响应，Flask也可以反过来，根据视图的名称和参数生成对应的URL
+
+2、蓝图
+	Blueprint是一种组织一组相关视图及其他代码的方式
+	蓝图是把视图及其他代码注册到蓝图，然后在工厂函数中把蓝图注册到应用，而不是直接把视图及其他代码注册到应用之中
+	Flaskr有两个蓝图，一个用于认证功能，另一个用于博客帖子管理，每个蓝图的代码都在单独的模块中，使用博客需要先认证
+
+3、URL
+	protocol://host:port/path/?query-string=xxx#anchor
+		protocol:访问协议，如http,https
+		host:主机名
+		post:端口号，默认80
+		path:查找路径
+		query-string:查询字符串
+		anchor:不用在后台，而是在前端定位页面
+
+4、服务器
+	Web服务器	处理http请求，如果请求的是静态文件，那么web服务器直接将结果返回，如apache,nginx
+	应用服务器	负责处理逻辑的服务器，如python的代码不能通过nginx处理的，只能通过应用服务器处理，如tomcat,uwsgi(处理python代码)，当客户端发送逻辑请求就用这个
+	web应用框架	封装常用web功能的框架
+
+5、debug模式
+	也就是开发者模式，当服务器代码出错，会在浏览器报错
+	if __name__=='__main__':
+		app.run(debug=True)
+	配置debug的模式的其他方式
+		直接在代码中app.debug=True
+		或者app.config.update(DEBUG=True)	//update方法的作用就是用一个字典更新另一个字典，这里用的就是这个原理
+		通过配置文件
+			配置文件config.py
+			import config
+			app.config.from_object(config)	//作用是将config.py中的所有配置信息传入app.config中
+
+6、config文件
+	使用app.config.from_object()的方式加载配置文件
+		1）导入import config
+		2) 使用app.config.from_object(config)
+	使用app.config.from_pyfile()的方式加载配置文件
+		1) 使用app.config.from_pyfile(config.py)	//直接使用，不需要导入，而且可以导入其他文件，不仅仅是.py文件
+			app.config.from_pyfile(config.py,silent=False)		//第二个参数默认是False，当加载配置文件出错会报错，例如找不到文件，当silent=True时，当出错就会跳过加载配置文件
+
+7、url中的参数
+	@app.route('/g/<params>/')
+		可以在参数前面加上类型
+			@app.route('/g/<int:params>/')
+				int	只能传递整形
+				string	只能传递不带斜杠/\的字符串，默认的类型是string
+				float	传递浮点型
+				path	传递路径，也就是说可以传递带斜杠的string
+				uuid	传递字符串，只不过这个字符串在整个程序中是唯一的
+				any		在一个url中指定多个路径
+		另一种传递参数的方式是
+			http://127.0.0.1:5000/g/?wd=gyy		//通过?传递参数
+			获取?传递的参数
+				import flask from request
+				@app.route('/g/')
+				def getParams():
+					wd=request.args.get('wd')
+
+8、url_for()
+	url_for()和@app.route()刚好是相反的，前者将视图函数映射到url，后者将url映射到视图函数
+	url_for(endpoint,**value)	//第一个参数是视图函数的名称，后面是一个字典类型，传入的是视图函数的参数，
+		@app.route('/')
+		def hello():
+    		return url_for('myList',num=1,index=2)		//当视图函数myList()没有参数，那么这个字典类型的参数可以省略,结果为/list/1/?index=2
+
+		@app.route('/list/<int:num>')
+		def myList(num):
+    		return 'my list'
+		并且当url_for()传入特殊符号作为参数的时候，url_for()会将它编码为十六进制形式，这样不至于出错
+		url_for('myfunc',params='/')		//此时得到的结果就是/../?params=%2f		/被编码为%2f
+
+9、自定义url转换器
+	注意，视图函数必须要用return返回一个值
+		实现一个类，继承自BaseConverter
+		在这个类中重写一个正则表达式，也就是重写regex
+		将自定义的类映射到app.url_map.converters中
+			例如新类型tel
+			class telephoneConverter(BaseConverter):
+				regex=r'1[538]\d{9}'		//电话号码正则表达式
+			app.url_map.converters['tel']=telephoneConverter
+				这样就可以向使用int,string那样使用tel了
+				@app.route('/<tel:myTelNum>')
+				def test(myTelNum):
+					return myTelNum
+
+10、基于BaseConverter的两个重要的函数
+	to_pyhton()
+		将url中传入的参数经过转化以后返回给视图函数
+	to_url()
+		将url中传入的参数经过转化以后返回给url_for
+		示例代码
+			class ListConverter(BaseConverter):
+				def to_pyhton(self,value):
+					return value.split('+')		#将a+b分割为['a','b']，这个返回值会自动返回给视图函数，作为视图函数的参数
+				def to_url(self,value):
+					return "+".join(value)	#将['a','b']拼接为a+b，这个返回值会自动返回给url_for(),然后返回一个url
+
+10、其他主机访问服务器
+	app.run(host=0.0.0.0,debug=True,port=4396)		//可以换端口，换ip，默认监听的ip是127.0.0.1，默认监听端口是5000
+
+11、GET和POST请求
+	前者从服务器获取数据，不改变服务器状态，后者给服务器提交数据，并且一般会改变服务器状态
+	向服务器传递参数
+		GET：将参数放到url中，以?xxx=xxx&xxx=xxx的形式传递
+		POST：一般不将参数放到url中，但是也可以放，一般将参数放到form data这个表单中
+		@app.route('/',methods=['GET','POST'])		#这种形式是GET请求和POST请求都可以，如果不加methods的话，默认是GET请求
+
+12、重定向
+	永久性重定向：当前一个网站被废弃了，再访问那个网站就会被永久重定向到新网站
+			访问jingdong.com，就会被永久重定向到jd.com，状态码是301
+	暂时性重定向：例如淘宝的登录页面，在没有登录的情况下查看购物车，就会被暂时重定向到登录页面，状态码是302
+	在flask中，重定向是通过redirect(location,code=302)实现的，location就是需要重定向的url，一般配合url_for()实现，默认code是302
+
+13、视图函数返回值Response
+	首先需要导入from flask import  Response 
+	正常情况下可以有三种返回值
+		1）返回一个字符串
+		2）返回一个元组
+		3）返回一个Response对象
+		4）当上面3种情况都不满足条件的情况下，会调用类Response的force_type()函数将返回值转化为Response对象，如果转化不成功，就返回错误
+			force_type(cls,response,environ=None)	#这是一个类方法
+			示例代码
+				from flask import jsonify
+				class JSONResponse(Response):
+					@classmethod
+					def force_type(cls,response,environ=None):
+						if isinstance(response,dict):		#当response是一个字典类型，就将它转化为json类型
+							response=jsonify(response)  #jsonify()的作用是将字典类型转化为json类型，除此之外，jsonify还可以将字典类型转化为Response对象,所以不要下一行代码也能正确执行
+						return super().force_type(response,environ)		#因为父类的force_type可以将json类型的对象转化为Response对象，所以可以在这里调用父类的方法
+
+				app.response_class=JSONResponse		#这行代码的作用是当返回值不是前三种类型的时候，选择调用哪一个类中的force_type()方法
+		其实不管返回什么类型，在返回的时候都将数据转化为Response类型的对象返回的
+			例如返回字符串
+				其实返回的是Response('string')
+
+		设置cookie
+			一个Response类型的对象respose
+				response.set_cookie('country','china')		#结果就设置了cookie:country=china
+
+14、模板
+	默认情况下，视图函数返回值可以是一个模板文件
+		return render_template('index.html')	#此时render_template()会在templates目录下面去找index.html这个文件，用来渲染并且返回
+
+15、模板传参数
+	在渲染模板的时候使用render_template()方法
+		render_template('xxx.html',params)
+			第一个参数是html文件的名字，后面是参数
+			例如username='gyy'
+			那么传递这个参数的方法
+			render_template('xxx.html',username='gyy')
+			当参数是一个字典的时候
+			person{
+				'name':'gyy',
+				'age':18,
+				'address':{
+					'city':'wuhan',
+					'street':'luoyu road'
+				}
+			}
+			此时有两种方法传递参数：
+			1）render_template('xxx.html',person=person)
+				在xxx.html文件中调用参数，例如在段落中使用
+					<p>{{person}}</p>			#会返回整个字典
+					<p>{{person.age}}</p>	#返回18
+					<p>{{person.address}}</p> #返回address这个字典
+					<p>{{person.address.city}}</p> #返回子字典city对应的wuhan这个值
+			2）render_template('xxx.html',**person)
+				在xxx.html文件中调用参数，例如在段落中使用
+					<p>{{person}}</p>		#返回空值，而不是返回整个字典
+					<p>{{person.name}}</p>	#报错，person未定义
+					<p>{{name}}</p>		#直接调用，返回gyy
+					<p>{{address}}</p>		#返回子字典
+					<p>{{address.cityy}}</p>	#返回wuhan 
+					上面这种结果是因为传递参数的时候，**person表示的就是传递一个字典参数
+
+16、在html文件中执行flask的代码
+	{{variableName or func}}		//两个{}用来存放和执行变量或者函数
+	{% logic %}						//{%%}用来存放和执行逻辑代码
+	例如在在html中定义一个登录标签，点击这个标签就会跳转到登录页面
+		这个过程：
+			点击登录标签，执行登录页面的视图函数login()的url_for()函数，获取这个视图函数的url，然后通过<a href>Login</a>跳转到这个url对应的视图函数去执行
+			在funcIndex.html中的代码为
+				<a href="{{url_for('index',num=1)}}">Login</a>	这里是函数就用{{}}，如果是if这种逻辑代码就用{%%},
+			在funcTemplate.py中的视图函数为：
+				@app.route('/login/<int:num>/')
+				def login(num):
+					return 'hello gyy'+str(num)
+
+17、jinja2过滤器
+	abs(num)		//求num的绝对值
+	default(value,default_value=,boolean=False)		//当值不存在时，设置默认值
+	first(seq)			//求序列的第一个值
+	last(seq)			//求最后一个值
+	int(value)		//将值转化为int型
+	float(value,default=0.0)	//将数据类型转化为浮点类型
+	string(value)		//将值转化为字符串
+	wordcount(value)		//计算字符串中单词的个数
+	lower(value)			//将字符串转化为小写
+	upper(value)			//将字符串转化为大写
+	replace(value,old,new)		//将value中的old转化为new，用法为value | replace(old,new)
+	truncate(value,length=255,killwords=False)			//截取value的前面length个字符显示，后面会显示三个点.，也算3个字符
+	striptags(value)删除value中的所有的html标签
+	format(value,*args,**kwargs)		//类似与python的format，用来格式化字符串
+			{{"%s"-"%s" | format('hello','world')}}		#将会输出hello world
+		过滤器的使用方法是variableName | filterName	它的作用是将变量variableName传入过滤器函数filterName作为参数，然后函数的返回值是整个表达式的值
+		例如在filterTemplate.py中：
+			render_template('filterIndex.html',num=-2)		//渲染的模板是filterIndex.html，传入的参数是num=-2
+		在filterIndex中如下使用过滤器
+			<p>{{num | abs}}</p>		//这个段落输出的值是2，因为经过abs转化了 ，这里使用的是函数，所以用{{}}
+
+	default过滤器的用法：
+			在fliterTemplate.py中：	
+				context={
+					'name':'gyy',
+					'signature':None
+				}
+				render_template('filterIndex.html',**context)		#此时传入的signature字段的值是None
+			在filterIndex中如下使用过滤器
+				<p>{{signature | default('这家伙很懒，没有留下任何数据',boolean=True)}}</p>
+				此时使用模板fliterIndex.html渲染时，就会出现默认值“这家伙很懒，没有留下任何数据”
+				default的第二个参数boolean的默认值是False，此时只要在字典中存在signature这个字段，即使值为None，在渲染时会出现None，而不会出现默认值
+				当第二个参数显式的修改为True时，当传入的参数为空时，例如None,'',False,那么就会打印出默认值
+				还有一种设置默认值的方式，和python中一样
+				<p>{{signature or '这家伙很懒，没有留下任何数据'}}</p>		#在python中也是以这种方式设置默认值
+
+	转义过滤器
+		escape和safe
+		在jinja2模板中，开启了自动转义
+		例如在html中，<script>alert("hello")</script>的作用是执行脚本代码alert("hello")，然后输出一个标签hello
+		在fliterTemplate中
+		context={
+			'escapestring':'<script>alert("hello")</script>'
+		}
+		render_template('filterIndex.html',num=-1,**context)
+		在filterIndex.html中
+			由于jinja2默认开启了转义，所以{{escapestring}}会输出原始字符串<script>alert("hello")</script>
+			使用safe可以让jinja2不转义，从而执行<script>中的脚本代码
+			<p>{{escapestring | safe}}</p>
+			也可以使用如下逻辑代码块关闭jinja2的默认转义功能
+				{%autoescape off%}
+					<p>{{escapestring}}</p>			#此时关闭了默认转义，所以会执行脚本代码
+					也可以使用转义过滤器escape，对这个字符串进行转义，从而禁止执行代码
+					<p>{{escapestring | escape}}</p>		#由于已经转义了，所以会执行代码
+				{%endautoescap%}
+	length可以获取序列的长度seq | length
+	join(value,d='-'),将一个序列使用d这个参数的值拼接成一个字符串（作用和python中的join差不多），用法seq | join('-')
+
+	自定义过滤器
+		app.config['TEMPLATES_AUTO_RELOAD']=True		//这个配置的作用是当改变了模板文件，会自动重新加载，类似与debug=True,改变源文件，程序自动加载一样
+		自定义过滤器的本质上自定义一个函数，然后将这个函数加入到jinja2的过滤器中
+		@app.template_filter('myFilter')		#将自定义的过滤器加入到jinja2的过滤器中，这里的过滤器的名字可以和下面函数的名字不同
+		def myFilter(value):		#这个参数是需要的，作用是处理这个字符串
+			return value.replace('a','')		#使用空字符串替换字符串中的a
+	自定义时间过滤器中用到的函数
+	首先导入模块
+		from datetime import datetime
+		time=datetime(2019,8,21,17,12,0)		使用时间2019-8-21 17:12:0初始化时间time
+		now=datetime.now()		获取系统当前时间
+		timeInterval=(now-time).total_seconds()		使用total_seconds()函数计算时间间隔为多少秒
+		time.strftime("%Y/%m/%d %H:%M%S")		初始化时间为2019/8/21 17:12:0
+
+18、if和for的逻辑语句
+	if和for语句是逻辑控制语句，需要写在{%%}中主要格式如下：
+		{% if variable==xxx %}
+			code xxx
+		{% elif variable==ggg %}
+			code ggg
+		{% endif%}
+			友情提示，一定要在最后加上{% endif %}
+
+		{% for variable in variables %}
+			code xxx
+		{% else %}
+			code ggg
+		{% endfor %}
+			友情提示，当遍历variables的时候，返回一个空值，那么会自动执行else中的代码，最后记得加上endfor
+		上面是用来遍历列表，或者元组的，遍历字典的方法在下面
+		{% for key in variables.keys() %}		#keys()只会返回字典中的键
+		{% for value in variables.values() %}			#values()只会返回字典中的值
+		{% for key,value in variables.items() %}		#items()会同时返回键值对
+
+		此外，jinja2中没有continue和break控制语句，这一点和python不同
+	
+19、宏macro
+	定义宏的方式如下
+		{% macro input(name="",value="",type="text")%}		#定义了一个宏，这个宏的名字是input
+			<type name="{{name}}" value="{{value}}" type="{{type}}">	#这个宏主要使用了html中的input标签。传入了3个参数
+		{% endmacro %}
+
+	使用宏
+		{{input("username")}}		#传入第一个name参数，其他两个参数使用默认值
+		{{input("password",type="password")}}	#传入了两个参数，type的传入的值是password，作用是将它以密码形式输入
+		{{input(value="提交",type="submit")}}		#当传入的参数type值为submit的时候，html中input标签会自动变成一个按钮，按钮的值为value传入的值
+		
+		将宏定义放在其他html文件中，然后在另一个文件中调用这个宏;
+			在文件macrosImport.html中定义了宏：
+				{% macro input(name="",value="") %}
+					<input name="{{name}}" value="{{value}}">
+				{% endmacro%}
+			在macroIndex.html文件中调用这个宏，首先导入宏
+				导入宏的路径是从templates文件夹开始的
+				{% from "macrosImport.html import input"%}
+				导入的方法和python导入包的方法一样
+					唯一的不同的是，如下
+						{% import "macrosImport.html" as macros %}		#当直接导入文件的时候，必须使用as将这个被导入的文件重新命名
+							以这种方式导入宏以后再使用宏
+									{{macros.input("username","gyy")}}	
+			注意，查找宏的模板文件的时候，一定不要以相对路径查找，而是以templates的绝对路径开始查找
+
+	在宏所在的模板中如果需要使用导入模板中的变量，那么导入方式就要发生改变
+		在macroTemplate.py中 
+			render_template('macroIndex.html',username="gyy")		#py文件穿了一个参数给macroIndex.html 
+		在macrosImport.html文件中
+			{% macro input(name="",value="") %}	
+				<input name="{{username}}",value="{{value}}">					#在这里需要使用py文件传给macroIndex.html文件的参数username
+			{% endmacro %}
+		在macroIndex.html文件中
+			{% from "macrosImport.html" import input with context  %}		#此时必须加上with context，这样的话，macroIndex文件的所有的环境变量都传给了宏模板文件macrosImport.html,所以在宏模板文件中也可以使用了macroIndex.html文件的变量了
+
+20、include的用法
+	include就是将Jinja2的一个模板的代码复制到另一个模板中执行
+	使用方法为{% include "includeTemplate/header.html" %}	#这一句代码就相当于文件includeTemplate/header.html的所有代码	
+
+21、set和with
+		set和with都是用来设置变量的，set设置的变量在整个文件中都能使用，with设置的变量只能在with语句块中使用
+			{% set username='gyy' %}
+			{% with username='gyy' %}
+			{% endwith %}
+		with语句不一定要定义变量，也可以为空，然后在语句块中使用set定义变量
+			{% with %}
+				{% set username='gyy' %}
+			{% endwith %}
+				此时set定义的变量同样只有在with语句块中才能使用
+
+22、加载静态文件
+		css,js,图片文件都属于静态文件，同模板文件一样，静态文件默认存储在工程目录下的static目录下
+			加载静态文件使用的是url_for()函数，第一个参数是"static"，这个是默认的静态文件存储路径，第二个参数是关键词参数filename=''具体的文件路径，这是在static下面的路径
+			<link rel="stylesheet" href="{{url_for('static',filename='css/loadStatic.css')}}">		#加载css文件
+    		<script src="{{url_for('static',filename='js/loadStatic.js')}}"></script>				#加载js文件
+   			 <img src="{{url_for('static',filename='images/girl.jpg')}}" alt="">				#加载图片
+
+23、模板继承
+		首先是baseInherit.html中
+			{% block firstInherit%}
+        		<p>这是父模板的代码</p>
+    		{% endblock%}
+    		{% block gyy %}
+    		{% endblock %}
+		在父模板中定义了两个代码块block，然后只需要在子模板中重写这两个代码块中的内容，就能够使用父模板中其他代码了
+		在子模板childInherit.html中 
+			{% extends 'baseInherit.html' %}
+
+			{% block firstInherit %}
+    			{{super()}}
+    			<p>这是子模块的代码</p>
+			{% endblock %}
+
+  			{% block gyy %}
+    			{{self.firstInherit()}}
+   				 <p>这是block gyy中的代码</p>
+			{% endblock %}
+		在子模板中，重写了父模板中两个block中的代码，这样子模板就能够使用父模板中的代码了
+			如果子模板需要使用父模板的被重写的那个blcok中的代码，那么就使用super()
+			如果在子模板中需要使用其他block中的代码，那么就使用self.firstInherit()，其中firstInherit是被调用block的代码
+
+24、app.route()的实现
+		add_url_rule(rule,endpoint=None,view_func=None)
+				这个函数用来添加url和视图函数的映射
+					第一个参数rule就是url
+					第二个参数endpoint就是给url取一个名字，如果这个参数为None，那么默认就使用视图函数的名字作为url的名字
+					第三个参数就是视图函数的名字
+				当使用了第二个参数以后，类似于url_for()这种返回url的函数，他的参数就变为第二个参数endpoint，而不是以前的视图函数的名字
+				两种用法
+					@app.route('/',endpoint='index')
+					def hello():
+						return 'hello world'
+					此时指定了url的名字为index，所以求hello()视图函数的url的方法为url_for('index')，其实app.route就是通过add_url_rule实现的
+					另一种方法
+						def hello():
+							return 'hello world'
+
+						app.add_url_rule('/',endpoint='index',view_func=hello)
+							此时指定了url的名字为index,所以求hello()视图函数的url的方法为url_for('index')
+
+25、类视图
+		标准类视图
+			标准类视图必须继承自flask.views.View.
+			必须实现dispatch_request方法，当请求来到后都要执行这个方法，这个方法的返回值就相当于之前的视图函数的返回值，必须是一个Response
+			必须通过app.add_url_rule(rule,endpoint,view_func)来实现url与类视图的映射
+				view_func=ListView.as_view('list')
+				当endpoint参数为空时，会默认使用view_func传入的参数的名字，例如view_func=ListView.as_view('list')，那么url的名字就是list
+				用法参考文件classView.py文件
+		基于调度方法的类视图
+			在子类继承自views.MethodView，然后在这个类中个实现get,post等方法，当客户端向服务器发送请求就调用类中的方法，例如发送get请求就调用
+			get方法，发送post请求就调用post请求
+
+		也可以为视图函数或者类视图添加装饰器，格式如下
+		视图函数
+		@app.route('/')
+		@myDecorator
+		def myViewFunc()
+		必须以这种顺序，不能换成其他顺序，因为@app.route和def myViewFunc就已经可以构成url和视图函数的映射了，所以必须将自定义的装饰器在他们之间隔开才能有效果
+		类视图
+			在标准类视图中，要重写dispatch_request这个方法，所以需要在这个方法的前面加上装饰器
+			decorators=[myDecorator]
+			def dispatch_request():
+				...
+
+26、蓝图
+	蓝图Blueprint的作用是将源码解耦合，使源码模块化
+		设蓝图文件为user.py 
+			在这个文件中
+				from flak import Blueprint 
+				userBp=Blueprint('usergyy',__name__,url_prefix='/user')		#第三个参数可要可不要，如果加了第三个参数，那么这个蓝图下面的所有url都要在前面加这个url_prefix的值才能路由到视图函数
+				@userBp.route('/gyy/')		#这个视图函数的url为/user/gyy/
+				def gyy():
+					return 'gyy'
+		在主文件中，就是定义了app的那个文件中注册蓝图
+				当主文件和user.py在同一级目录下
+				from user import userBp
+				当user.py在目录blueprints下，blueprints和user.py在同一级目录下
+				from blueprints.user import userBp 
+				然后在主文件中注册这个蓝图
+				app.register_blueprint(userBp)
+				此后就可以路由到蓝图的url的视图函数了
+
+		蓝图模板文件的查找
+			如果项目中templates中存在模板，那么蓝图就直接使用templates中的模板文件，否则就在自定义的目录下面查找
+			例如在user.py中定义蓝图
+			userBp=Blueprint('user',__name__,prefix='/user',template_folder='myfolder')
+				参数template_folder指定的路径是一个相对路径
+				直接从当前蓝图文件user.py所在的目录下开始查找
+				当项目temolates和template_folder同时指定了模板文件，那么会优先选择templates中的模板文件
+		同理查找静态文件的时候，默认会在项目的static目录下面查找
+			userBp=Blueprint('user',__name__,prefix='/user',template_folder='myfolder',static_folder='mystatic')
+				#此时指定了相对目录，这个相对目录也是从蓝图文件所在的目录开始查找
+			但是在调用静态文件的时候，例如调用css文件
+				<link rel="stylesheet" href="{{url_for('user.static',filename='user.css')}}">
+				这个时候就会在自定义的目录下面查找静态文件了
+		
+		url反转蓝图
+			使用url_for对求视图函数的url的时候，如果视图函数或者类视图在蓝图中，那么需要指定蓝图的名字
+			例如
+				newsBp=Blueprint('news',__name__)		#此时蓝图的名字就是news
+				@newsBp.route('/message/')
+				def message():
+					return 'hello'
+
+			在主文件中
+				print(url_for('news.message'))		#如代码所示，需要指定蓝图的名字
+			在模板文件中，如果使用url_for也需要指定蓝图的名字
+			<a href="{{url_for('news.message')}}">蓝图</a>
+27、子域名
+		例如主域名为aaa.com,那么子域名就是设置为child.aaa.com,
+		在实验过程中，修改/etc/hosts文件，让主域名和子域名都对应127.0.0.1
+		在文件/etc/hosts中增加两行
+			127.0.0.1		aaa.com 
+			127.0.0.1		child.aaa.com
+		新建蓝图文件
+			childBp=Blueprint('child',__name__,subdomain='child')
+
+			@childBp.route('/')
+			def helloGyy():
+				return 'hello gyy'
+
+		在主文件中，注册蓝图，然后使用蓝图
+			from blueprints.child import childBp
+			首先修改配置，将aaa.com映射到主机ip地址
+				app.comfig['SERVER_NAME']='aaa.com:5000'
+			然后注册蓝图
+				app.register_blueprint(childBp)
+			此时，就可以使用子域名了
+
+28、使用python连接mysql数据库
+	python通过SQLALchemy连接数据库，pymysql是python中用于连接数据库的一个库，SQLALchemy是一个orm工具，提供对象关系映射功能，因为python是面向对象，而mysql是一种关系数据库，sqlalchemy的作用就是将关系和对象进行映射
+	使用sqlalchemy连接数据库
+		HOSTNAME="127.0.0.1"
+		PORT="3306"
+		DATABASE="gyy"
+		USERNAME="root"
+		PASSWORD="98782343"
+		DB_URI="mysql+pymysql://{username}:{password}@{host}:{port}/{database}?charset=utf8".format(username=USERNAME,
+		password=PASSWORD,host=HOSTNAME,port=PORT,database=DATABASE)
+		构造了一个数据库的URI
+	然后使用create_engine创建一个数据库引擎
+		engine=create_engine(DB_URI)
+	再通过引擎的connect函数将数据库引擎与数据库连接
+		conn=engine.connect()				#这个conn就相当于打开了文件的文件指针
+	最后就能通过conn操作数据库了
+		result=conn('select 1')
+		2019-09-02 12:55:36 IP地址信息获取错误，请检查IP设置，并正确配置IP信息，然后重新认证。
+
+29、ORM
+	ORM(Object Relationship Mapping)对象关系映射
+		也就是对象模型与数据库表的映射
+		通过ORM，我们可以通过类的方式去操作数据库，而不用写原生的SQL语句，通过把表映射成类，把行看做实例，把字段作为属性
+		ORM在执行对象操作的时候最终还是会把对应的操作转化为数据库原生语句
+			类-->表
+			实例-->表中的一行数据
+			属性-->表中的字段
+		# 创建一个sqlalchemy的基类，根据前面创建的数据库殷勤来创建基类
+		Base=declarative_base(engine)   
+		# create table person(id int primary key autoincrement,name varchar(50),age int)         其中autoincrement表示自增长
+		# 1、创建一个ORM模型，这个ORM模型必须继承自sqlalchemy给我们提供的基类
+		class Person(Base):
+    		__tablename__='person'          #创建的表的名字
+		# 2、在这个ORM模型中创建一些属性，来跟表中的字段进行一一映射。这些属性必须是sqlalchemy提供给我们的数据类型
+    		id=Column(Integer,primary_key=True,autoincrement=True)
+    		name=Column(String(50))
+    		age=Column(Integer)
+		# 3、将创建号的ORM模型映射到数据库中
+		Base.metadata.create_all()          #将所有Base的子类的ORM模型映射到创建Base基类的数据库引擎对应的数据库中
+
+29、sqlalchemy常用数据类型
+	Integer							整形
+	Float								浮点型，一般只有4位
+	Double							双精度类型，比浮点类型的数据更多
+	Boolean 						传递True/False进去
+	DECIMAL							定点类型，这个不会省略后面的，一般是多少位就存储多少位，像字符串一样，DECIMAL(10,4)表示小数点前面可以存10位，小数点后面可以存4位
+	enum								枚举类型：tag=Column(Enum("python","flask","jinja2"))			#那么在后面为tag这个属性列传入值时，只能传python,flask,jinja2这三个值之一
+																								在python3中有enum这个类，可以直接使用到sqlalchemy中：
+																											import enum 
+																											class myEnum(enum.Enum):
+																												python='python'
+																												flask='flask'
+																												jinja2='jinja2'
+																											class Gyy(Base):
+																												tag=Column(Enum(myEnum))			#此时tag字段也只能使用类myEnum的属性中的一个
+																											gyy=Gyy(tag=myEnum.python)
+																											session.add(gyy)
+																											session.commit()		#将数据提交给数据库
+	Date 								传递datetime.date()进去，年月日
+															from datetime import date 
+															tag=Column(Date) 
+															gyy=Gyy(tag=date(2019,9,1))			#存储年月日
+	DateTime 						传递datetime.datetime()进去，年月日时分秒
+															from datetime import datetime	
+															tag=Column(Datetime)
+															gyy=Gyy(tag=datetime(2019,9,1,11,11,11))			#存储2019年9月1日 11时11分11秒
+	Time 								传递datetime.time()进去时分秒
+															from datetime import time 
+															tag=Column(Time)
+															gyy=Gyy(tag=time(hour=11,minute=11,second=11))
+	String 								字符类型，使用时需要指定长度，区别于Text类型	String(10)			长度为10
+	Text 								文本类型，映射到数据库中就是text类型，能存65535个字符，超出这个范围就必须使用LONGTEXT
+	LONGTEXT						长文本类型，映射到数据库中就是longtext类型
+											和其他类型导入的方式不一样
+											from sqlalchemy.dialects.mysql import LONGTEXT					#因为LONGTEXT这个数据类型只在mysql这个数据库中存在，所以要这样导入
+											tag=Column(LONGTEXT)
+											gyy=Gyy(tag='abababab')
+
+30、Column()可以添加的属性
+		default										默认值 
+										tag=Column(Integer,default=11)
+										gyy=Gyy()		#此时没有为Gyy传入值，所以在数据库的表中存入的值不是null，而是11
+										session.add(gyy)
+										session.commit()
+										default还可以指定函数，但是此时只要函数名，不需要括号
+										tag=Column(Datetime,default=datetime.now)			#datetime.now()是datetime模块下面的函数
+		nullable									是否可以为空值，默认是为空
+										tag=Column(String(50),nullable=False)			#此时就不能为空了
+		primary_key								是否为主键
+		unique											是否唯一
+										unique=True				#表示每一行必须唯一，默认为可以重复
+		autoincrement 							是否自动增长
+		onupdate										更新的时候执行的函数
+										tag=Column(Datetime,onupdate=datetime.now)				#onupdate也可以接一个函数，在表更新的时候触发这个函数
+										但是在第一次插入数据的时候不会触发onupdate这个属性，所以最好的方法就是同时添加onupdate和default属性
+		name 													该属性在数据库中的字段映射
+											当不想使用类中的属性作为表的字段的名字，那么就可以使用name这个参数
+																tag=Column(Integer,name='aaa')			#此时在表中的字段名称就不是tag而是aaa了
+																也可以通过位置参数来指定，而不是通过关键字参数指定，位置参数位于第一个
+																tag=Column('aaa',Integer)
+															
+31、query传递的关键字参数
+			1、模型对象，指定查找这个模型中所有的对象
+			2、模型中的属性，可以指定查找某个模型中的某几个属性
+			3、聚合函数：
+							func.count:统计行的数量
+							func.avg:求平均值
+							func.max:求最大值
+							func.min:求最小值
+							func.sum:求和
+			示例代码见myProjectOne/sqlquery.py
+
+32、过滤条件
+		1、equals:
+					query.filter(User.name=='ed')
+		2、not equals:
+					query.filter(User.name!='ed')
+		3、like:
+					query.filter(User.name.like('%ed%'))
+		4、in:
+					query.filter(User.name.in_(['ed','wendy','jack']))
+					同时in也可以作用于下一个Query
+					query.filter(User.name.in_(session.query(User.name).filter(User.name.like('%ed%'))))
+		5、not in:
+					query.filter(~User.name.in_(['ed','wendy','jack']))
+		6、is null 
+					query.filter(User.name==None)
+					或者是
+					query.filter(User.name.is_(NOne))
+		7、is not null
+					query.filter(User.name!=None)
+					或者是
+					query.filter(User.name.isnot(None))
+		8、and
+					from sqlalchemy import and_
+					query.filter(and_(User.name=='ed',User.filname=='Ed Jones'))
+					或者传递多个参数
+					query.filter(User.name='ed',User.fullname=='Ed Jones')
+					或者通过多次filter操作
+					query.filter(User.name='Ed').filter(User.fullname=='Ed Jones')
+		9、or
+					from sqlalchemy import or_
+					query filter.filter(or_(User.name=='ed',User.name='wendy'))
+
+	在命令行中，通过以下命令给表添加一个列
+	alter table article add column content text;
+	此时，如果需要在sqlalchemy中操作这个列，那么在类Article中必须添加一个属性content=Column(Text)

@@ -1,0 +1,97 @@
+1、记一个很铁憨憨的错误
+	在执行npm install的时候，一直提示找不到make，我居然很久没有反应过来，还去网上找了很久，原来在执行npm install安装模块的时候需要make
+	所以安装make：apt install make
+2、这是一个很简单的错误
+	在注册管理员(enroll user admin)的时候，有可能会抛出异常:gRPC binary module was not installer
+	此时执行npm rebuild就可以解决问题
+3、使用logspout观察PaperNet的输出，首先进入目录：
+	cd commercial-paper/organization/magnetocorp/configuration/cli/
+	然后执行脚本：
+	./monitordocker.sh net_basic
+	net_basic是前面启动的网络
+4、在终端中cd到某一个目录中，然后使用命令：
+	code .
+	就可以将这个目录自动在vscode中打开了
+5、搭建first-network的时候，有一个大坑
+	因为现在最新版的源码已经更新到1.4.2，然而在first-network的配置文件configtx.yaml中，channel,orderer,application都不支持1.4.2的capabilities，所以在执行./byfn的时候会报错，orderer节点不能启动
+	解决的方法是切换为之前的版本1.4.0：
+		git checkout v1.4.0
+	然后重新执行：
+		./byfn.sh generate
+		./byfn.sh down
+		./byfn.sh up
+6、在官方文档的实验（Adding an Org to a Channel）中，有两处导入环境变量：
+	export CORE_PEER_ADDRESS=peer0.org2.example.com:9051
+	export CORE_PEER_ADDRESS=peer1.org3.example.com:12051
+	这两处的9051和12051都需要改成7051，因为9051和12051是docker容器映射到宿主机器的端口号，但是docker容器内部的端口号还是7051，而这两个环境变量都是docker容器内部的环境的环境变量，所以要改为7051。
+	当一个节点刚加入一个fabric网络并且执行channel中的链码的时候，此时链码的镜像在这个节点上还没有安装，所以第一次使用链码的时候需要take a minute来等等结果。
+7、git fetch origin//作用是从远程的refs/heads/命名空间复制所有的分支，并且将它们存到本地的refs/remotes/origin/命名空间中
+	git branch -a //查看所有的分支，前面带*就是本地头指针当前位于的分支，也就是当前正在使用的分支
+	git branch -r //查看远程所有分支
+8、在对节点升级版本的时候，首先会导入环境变量export IMAGE_TAG=$(go env GOARCH)-1.4.2,此时IMAGE_TAG=amd64-1.4.2(我的计算机是linux-amd64)，这个IMAGE_TAG会在./base/docker-compose-base.yaml和./base/peer-base.yaml中使用到，用来定义peer和orderer节点的版本。此外在重新启动节点的时候，加的参数--no-deps表示的意思是启动这个镜像的时候不需要其他的依赖。
+9、回车\r和换行\n的区别
+	\r是将光标回到本行的开头的地方
+	\n是将光标移到下一行，在windows中不移动到下一行开头的地方，在linux中移动到下一行开头的地方
+10、在使用Go语言的接口的时候，出现了一个警告：
+	exported type Phone should have comment or be unexported
+	它的意思是在导出一个Phone类型的时候，需要在它前面对它做出一定的注释，完整如下：
+		//Phone is a father class of all the smart phone
+		type Phone interface{
+			call()
+		}
+	或者也可以将接口的名称小写，也能消除这个警告，这种解决方法不知道为什么能行，哈哈哈，不知道原因就不建议使用吧
+11、再记一次Go语言中的使用的警告错误（个人感觉挺狗血的）
+	函数fmt.Println()不能使用参数%s,%d这种用来传递参数的，它只以它本来的形式接受参数，也就是说不需要这种%s,%d，而是直接将参数传递进去，用逗号隔开
+		i:=1
+		fmt.Println("hello world ",i)//输出hello world 1
+	而函数fmt.Printf()就可以接受%s,%d这种参数
+		i:=1
+		fmt.Printf("hello world %d",i)//输出hello world 1
+
+12、安装python环境的时候出现的一个很错误
+	极度睿智。。。。
+	python2和python3有各自的不同的pip，所以我在vscode选择了python3的情况下，安装了python2的pip，难怪vscode找不到pip。。。。
+
+13、python的包的导入
+	python的包文件是requirements.txt
+	使用pip3导入的方式是
+		pip3 install -r requirements.txt
+	当然，也可以自己导出requirements.txt文件
+		pip3 freeze > requirements.txt
+
+14、vscode的code runner运行python代码的默认设置
+	默认设置为python
+	要修改为python3
+		setting3->Code-runner:Executor Map(这里有一个Edit in setting.json,点击进去)->注释掉"python.pythonPath，然后新加上"code-runner.executorMap，会出现很多选项"->修改python为"/usr/bin/python3 -u"
+
+15、使用虚拟环境来管理项目的依赖，这样可以为每一个项目创建独立的依赖，而不会影响其它项目
+	vene就是用于创建虚拟环境的模块
+	mkdir myproject
+	cd myproject	//在我的工程目录下
+	python3 -m venv venv	//创建一个虚拟环境，第二个venv就是虚拟环境的名称，可以使用其它名称
+	. venv/bin/active	//激活相应的虚拟环境，激活以后，在终端提示符前面会显示虚拟环境的名称
+	deactive		//回到正常环境
+
+16、redis-server启动错误
+	好久没有遇到百度了很久都不能解决的错误了
+	启动redis-server的时候出现如下错误
+		Creating Server TCP listening socket *:6379: bind: Address already in use
+	端口被进程占用
+	然后尝试过使用kill杀死进程，但是居然杀不掉
+		netstat -ap | grep 6379
+		kill -9  PID
+	后来发现另一个方法就是stop掉已经开启的redis服务
+		sudo /etc/init.d/redis-server stop
+	然后重新启动服务
+		redis-server
+
+17、我真傻，真的，在mysql中输入命令没有反应
+	原来需要在命令后面加一个分号，才表示命令结束
+
+18、wdnmd这错误
+	python3 错误OSError: [Errno 98] Address already in use
+	在本地运行cello源码operator的时候出现上面的错误
+	检查8080端口被占用的情况
+	sudo lsof -i:8080		#这里一定要加sudo不然看不到进程pid
+	sudo kill -9 pid
+	上一次创建主机成功了，但是创建链的时候健康状态是Fail，原因是我将python3的包安装在了虚拟环境下面，但是跑源码的时候，并没有打开虚拟环境

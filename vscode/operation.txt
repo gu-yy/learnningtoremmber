@@ -1,4 +1,0 @@
-1、按列选择：
-	alt+shift+鼠标左键选择
-2、插件
-	coder runner
